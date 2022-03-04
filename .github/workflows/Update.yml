@@ -1,0 +1,113 @@
+name: Update
+
+on: 
+  repository_dispatch:
+  workflow_dispatch:
+
+# 定时触发编译
+  schedule:
+    - cron: 0 0,4,8,12,16,20 * * *
+
+# 点赞☆Star触发编译
+#  watch:
+#    types: [started]
+
+jobs:
+  Update:
+    runs-on: ubuntu-20.04
+    steps:
+    - name: Clone Repository
+      uses: actions/checkout@v2
+
+    - name: Set git
+      run : |
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "github-actions[bot]"
+        sudo timedatectl set-timezone "Asia/Shanghai"
+        
+    - name: Update
+      run: |
+
+        rm -rf ./luci-app-pushbot
+        rm -rf ./luci-app-serverchan
+        rm -rf ./luci-app-adblock-plus
+        rm -rf ./luci-app-easymesh
+        rm -rf ./luci-app-ikoolproxy
+        rm -rf ./luci-app-kodexplorer
+        rm -rf ./luci-app-openclash
+        rm -rf ./theme-18.06/luci-theme-edge
+        rm -rf ./theme-18.06/luci-theme-infinityfreedom
+        rm -rf ./theme-18.06/luci-theme-neobird
+        rm -rf ./lisaac/*  
+        rm -rf ./linkease/*
+        rm -rf ./jerrykuku/*
+        rm -rf ./op-oaf
+        rm -rf ./op-fileBrowser/*
+        rm -rf ./op-aliyun/*
+        rm -rf ./patch/wall
+        rm -rf ./patch/luci-app-ssr-plus
+        rm -rf ./patch/redsocks2
+        
+ 
+        git clone https://github.com/zzsj0928/luci-app-pushbot ./luci-app-pushbot
+        git clone https://github.com/tty228/luci-app-serverchan ./luci-app-serverchan
+        git clone https://github.com/small-5/luci-app-adblock-plus -b 18.06 ./luci-app-adblock-plus
+        git clone https://github.com/ntlf9t/luci-app-easymesh ./luci-app-easymesh
+        git clone https://github.com/1wrt/luci-app-ikoolproxy ./luci-app-ikoolproxy
+        svn export https://github.com/Lienol/openwrt-package/trunk/luci-app-kodexplorer ./luci-app-kodexplorer
+        svn checkout https://github.com/vernesong/OpenClash/branches/dev/luci-app-openclash ./luci-app-openclash
+        
+        svn export https://github.com/lisaac/luci-lib-docker/trunk/collections/luci-lib-docker ./lisaac/luci-lib-docker
+        svn export https://github.com/lisaac/luci-app-diskman/trunk/applications/luci-app-diskman ./lisaac/luci-app-diskman
+        svn export https://github.com/lisaac/luci-app-dockerman/trunk/applications/luci-app-dockerman ./lisaac/luci-app-dockerman
+        
+        svn export https://github.com/linkease/nas-packages-luci/trunk/luci/luci-app-ddnsto ./linkease/luci-app-ddnsto
+        svn export https://github.com/linkease/nas-packages-luci/trunk/luci/luci-app-linkease ./linkease/luci-app-linkease
+        svn export https://github.com/linkease/nas-packages-luci/trunk/luci/luci-app-quickstart ./linkease/luci-app-quickstart
+        svn export https://github.com/linkease/nas-packages/trunk/network/services/ddnsto ./linkease/ddnsto
+        svn export https://github.com/linkease/nas-packages/trunk/network/services/linkease ./linkease/linkease
+        svn export https://github.com/linkease/nas-packages/trunk/network/services/quickstart ./linkease/quickstart
+        svn export https://github.com/6ang996/istore/trunk/luci/luci-app-store ./linkease/luci-app-store
+        svn export https://github.com/linkease/istore-ui/trunk/app-store-ui ./linkease/app-store-ui 
+              
+        git clone https://github.com/jerrykuku/luci-app-vssr ./jerrykuku/luci-app-vssr
+        git clone https://github.com/jerrykuku/lua-maxminddb ./jerrykuku/lua-maxminddb
+        git clone https://github.com/jerrykuku/luci-app-jd-dailybonus ./jerrykuku/luci-app-jd-dailybonus
+        git clone https://github.com/jerrykuku/luci-theme-argon ./jerrykuku/luci-theme-argon
+        git clone https://github.com/jerrykuku/luci-theme-argon -b 18.06 ./jerrykuku/luci-theme-argon-18.06
+        git clone https://github.com/jerrykuku/luci-app-argon-config ./jerrykuku/luci-app-argon-config
+
+        git clone https://github.com/destan19/OpenAppFilter ./op-oaf
+                             
+        svn export https://github.com/xiaoqingfengATGH/luci-theme-infinityfreedom/trunk/luci-theme-infinityfreedom ./theme-18.06/luci-theme-infinityfreedom
+        git clone https://github.com/kiddin9/luci-theme-edge -b 18.06 ./theme-18.06/luci-theme-edge 
+        git clone https://github.com/xiangfeidexiaohuo/luci-theme-neobird ./theme-18.06/luci-theme-neobird
+                         
+        svn export https://github.com/kiddin9/openwrt-packages/trunk/filebrowser ./op-fileBrowser/filebrowser
+        svn export https://github.com/kiddin9/openwrt-packages/trunk/luci-app-filebrowser ./op-fileBrowser/luci-app-filebrowser
+        
+        svn export https://github.com/messense/aliyundrive-webdav/trunk/openwrt/aliyundrive-webdav ./op-aliyun/aliyundrive-webdav
+        svn export https://github.com/messense/aliyundrive-webdav/trunk/openwrt/luci-app-aliyundrive-webdav ./op-aliyun/luci-app-aliyundrive-webdav
+        svn export https://github.com/messense/aliyundrive-fuse/trunk/openwrt/aliyundrive-fuse ./op-aliyun/aliyundrive-fuse
+        svn export https://github.com/messense/aliyundrive-fuse/trunk/openwrt/luci-app-aliyundrive-fuse ./op-aliyun/luci-app-aliyundrive-fuse
+
+        
+        git clone https://github.com/xiaorouji/openwrt-passwall ./patch/wall
+        svn export https://github.com/fw876/helloworld/trunk/luci-app-ssr-plus ./patch/luci-app-ssr-plus
+        svn export https://github.com/coolsnowwolf/packages/trunk/net/redsocks2 ./patch/redsocks2
+        
+
+    - name: Apply
+      run: |
+        git add .
+        git commit -m "Sync: $(date +%Y-%m-%d" "%H:%M)"
+        git push -f 
+        
+        
+    - name: Delete workflow runs
+      uses: GitRML/delete-workflow-runs@main
+      continue-on-error: true
+      with:
+        retain_days: 1
+        keep_minimum_runs: 0     
+        

@@ -1,0 +1,97 @@
+#提交就可以直接用的配置模板文件
+#a template config can be use with a apply
+bind_host: 0.0.0.0
+bind_port: 3000
+users:
+- name: root
+  password: 
+language: ""
+rlimit_nofile: 0
+dns:
+  bind_host: 0.0.0.0
+  port: 5553
+  statistics_interval: 1
+  protection_enabled: true
+  filtering_enabled: true
+  filters_update_interval: 24
+  blocking_mode: nxdomain
+  blocked_response_ttl: 10
+  querylog_enabled: false
+  querylog_interval: 1
+  ratelimit: 0
+  ratelimit_whitelist: []
+  refuse_any: false
+  bootstrap_dns:
+#bootstrap_dns
+  all_servers: false
+  allowed_clients: []
+  disallowed_clients: []
+  blocked_hosts: []
+  parental_block_host: ""
+  safebrowsing_block_host: ""
+  blocked_services: []
+  cache_size: 4194304
+  parental_sensitivity: 13
+  parental_enabled: false
+  safesearch_enabled: false
+  safebrowsing_enabled: false
+  safebrowsing_cache_size: 1048576
+  safesearch_cache_size: 1048576
+  parental_cache_size: 1048576
+  cache_time: 30
+  rewrites: []
+  upstream_dns:
+#upstream_dns
+tls:
+  enabled: false
+  server_name: ""
+  force_https: false
+  port_https: 443
+  port_dns_over_tls: 853
+  certificate_chain: ""
+  private_key: ""
+  certificate_path: ""
+  private_key_path: ""
+filters:
+- enabled: false
+  url: https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/anti-ad-easylist.txt
+  name: anti-AD
+  id: 1603340680
+- enabled: true
+  url: https://halflife.coding.net/p/list/d/list/git/raw/master/ad.txt
+  name: halflife-移动端
+  id: 1614320935
+- enabled: true
+  url: https://halflife.coding.net/p/list/d/list/git/raw/master/ad-edentw.txt
+  name: halflife-ad-edentw
+  id: 1614320937
+- enabled: true
+  url: https://halflife.coding.net/p/list/d/list/git/raw/master/ad-pc.txt
+  name: halflife-PC端
+  id: 1614327142
+- enabled: true
+  url: https://raw.githubusercontent.com/AdAway/adaway.github.io/master/hosts.txt
+  name: AdAway
+  id: 1614411351
+- enabled: true
+  url: https://cdn.jsdelivr.net/gh/neoFelhz/neohosts@gh-pages/full/hosts.txt
+  name: neoHosts
+  id: 1614411352
+- enabled: false
+  url: https://hblock.molinero.dev/hosts_adblock.txt
+  name: Hblock
+  id: 1629560972
+user_rules: []
+dhcp:
+  enabled: false
+  interface_name: ""
+  gateway_ip: ""
+  subnet_mask: ""
+  range_start: ""
+  range_end: ""
+  lease_duration: 86400
+  icmp_timeout_msec: 1000
+clients: []
+log_file: ""
+verbose: false
+schema_version: 5

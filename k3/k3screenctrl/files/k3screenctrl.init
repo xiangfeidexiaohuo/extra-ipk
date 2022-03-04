@@ -1,0 +1,28 @@
+#!/bin/sh /etc/rc.common
+
+START=55
+
+USE_PROCD=1
+
+PROG=/usr/bin/k3screenctrl
+
+m=$(uci get k3screenctrl.@general[0].screen_time) && [ $m -lt 10 ] && m=10
+d=$(uci get k3screenctrl.@general[0].refresh_time) && [ $d -lt 1 ] && d=1
+
+SCRIPTS_BASE=/lib/k3screenctrl/
+TEMP_DIR=/tmp/k3screenctrl
+
+start_service() {
+    mkdir -p $TEMP_DIR
+    mkdir -p $TEMP_DIR/lan_speed
+    $PROG -m $m -d $d &
+}
+
+stop_service() {
+    killall k3screenctrl
+}
+
+restart(){
+    killall k3screenctrl
+    $PROG -m $m -d $d &
+}
