@@ -24,6 +24,13 @@ jobs:
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git config --global user.name "github-actions[bot]"
         sudo timedatectl set-timezone "Asia/Shanghai"
+
+    - name: Delete workflow runs
+      uses: GitRML/delete-workflow-runs@main
+      continue-on-error: true
+      with:
+        retain_days: 1
+        keep_minimum_runs: 0  
         
     - name: Update
       run: |
@@ -102,12 +109,4 @@ jobs:
         git add .
         git commit -m "Sync: $(date +%Y-%m-%d" "%H:%M)"
         git push -f 
-        
-        
-    - name: Delete workflow runs
-      uses: GitRML/delete-workflow-runs@main
-      continue-on-error: true
-      with:
-        retain_days: 1
-        keep_minimum_runs: 0     
-        
+              
