@@ -100,6 +100,7 @@ jobs:
 
         
         git clone https://github.com/xiaorouji/openwrt-passwall ./patch/wall
+        rm -rf ./patch/wall/.github
         svn export https://github.com/fw876/helloworld/trunk/luci-app-ssr-plus ./patch/luci-app-ssr-plus
         svn export https://github.com/coolsnowwolf/packages/trunk/net/redsocks2 ./patch/redsocks2
         
