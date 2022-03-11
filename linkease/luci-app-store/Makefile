@@ -7,15 +7,15 @@ include $(TOPDIR)/rules.mk
 
 LUCI_TITLE:=LuCI based ipk store
 LUCI_DESCRIPTION:=luci-app-store is a ipk store developed by LinkEase team
-LUCI_DEPENDS:=+tar +coreutils +coreutils-stat +luci-lib-ipkg +curl +opkg +libuci-lua +mount-utils
+LUCI_DEPENDS:=+curl +opkg +luci-lib-ipkg +tar +coreutils +coreutils-stat +libuci-lua +mount-utils
 LUCI_PKGARCH:=all
 
-PKG_VERSION:=0.1.7
-PKG_RELEASE:=1
+PKG_VERSION:=0.1.8
+PKG_RELEASE:=3
 
 ISTORE_UI_VERSION:=1.0
-ISTORE_UI_RELEASE:=7
-PKG_HASH:=395936ef07403674068a7719c9fcbad59dafa0f2b39d6da05d9eae0b5a7050a6
+ISTORE_UI_RELEASE:=8
+PKG_HASH:=0c97708e3621889e9a87297375ee077f4aabf3d734d87556913b8ef27da14dbb
 
 PKG_SOURCE_URL_FILE:=v$(ISTORE_UI_VERSION)-$(ISTORE_UI_RELEASE).tar.gz
 PKG_SOURCE:=istore-ui-$(PKG_SOURCE_URL_FILE)
@@ -23,7 +23,8 @@ PKG_SOURCE_URL:=https://github.com/linkease/istore-ui/archive/refs/tags
 
 PKG_MAINTAINER:=jjm2473 <jjm2473@gmail.com>
 
-TARGET_CONFIGURE_OPTS = FRONTEND_DIST="$(BUILD_DIR)/istore-ui-$(ISTORE_UI_VERSION)-$(ISTORE_UI_RELEASE)/app-store-ui/src/dist" APP_STORE_VERSION="$(PKG_VERSION)-$(PKG_RELEASE)"
+TARGET_CONFIGURE_OPTS= FRONTEND_DIST="$(BUILD_DIR)/istore-ui-$(ISTORE_UI_VERSION)-$(ISTORE_UI_RELEASE)/app-store-ui/src/dist" APP_STORE_VERSION="$(PKG_VERSION)-$(PKG_RELEASE)"
+TARGET_CONFIGURE_OPTS+= SED="$(SED)"
 
 define Package/luci-app-store/conffiles
 /etc/.app_store.id
