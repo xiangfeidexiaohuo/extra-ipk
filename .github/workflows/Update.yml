@@ -54,6 +54,7 @@ jobs:
         rm -rf ./patch/wall
         rm -rf ./patch/luci-app-ssr-plus
         rm -rf ./patch/redsocks2
+        rm -rf ./patch/luci-app-bypass
         
  
         git clone https://github.com/zzsj0928/luci-app-pushbot ./luci-app-pushbot
@@ -103,6 +104,7 @@ jobs:
         rm -rf ./patch/wall/.github
         svn export https://github.com/fw876/helloworld/trunk/luci-app-ssr-plus ./patch/luci-app-ssr-plus
         svn export https://github.com/coolsnowwolf/packages/trunk/net/redsocks2 ./patch/redsocks2
+        svn export https://github.com/kiddin9/openwrt-bypass/trunk/luci-app-bypass ./patch/luci-app-bypass
         
 
     - name: Apply
