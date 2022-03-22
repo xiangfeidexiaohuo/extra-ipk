@@ -37,7 +37,6 @@ jobs:
 
         rm -rf ./luci-app-pushbot
         rm -rf ./luci-app-serverchan
-        rm -rf ./luci-app-adblock-plus
         rm -rf ./luci-app-easymesh
         rm -rf ./luci-app-ikoolproxy
         rm -rf ./luci-app-kodexplorer
@@ -59,7 +58,6 @@ jobs:
  
         git clone https://github.com/zzsj0928/luci-app-pushbot ./luci-app-pushbot
         git clone https://github.com/tty228/luci-app-serverchan ./luci-app-serverchan
-        git clone https://github.com/small-5/luci-app-adblock-plus -b 18.06 ./luci-app-adblock-plus
         git clone https://github.com/ntlf9t/luci-app-easymesh ./luci-app-easymesh
         git clone https://github.com/1wrt/luci-app-ikoolproxy ./luci-app-ikoolproxy
         svn export https://github.com/Lienol/openwrt-package/trunk/luci-app-kodexplorer ./luci-app-kodexplorer
