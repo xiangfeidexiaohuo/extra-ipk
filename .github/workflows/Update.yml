@@ -60,6 +60,7 @@ jobs:
         git clone https://github.com/tty228/luci-app-serverchan ./luci-app-serverchan
         git clone https://github.com/ntlf9t/luci-app-easymesh ./luci-app-easymesh
         git clone https://github.com/1wrt/luci-app-ikoolproxy ./luci-app-ikoolproxy
+        rm -rf ./luci-app-ikoolproxy/.github        
         svn export https://github.com/Lienol/openwrt-package/trunk/luci-app-kodexplorer ./luci-app-kodexplorer
         svn checkout https://github.com/vernesong/OpenClash/branches/dev/luci-app-openclash ./luci-app-openclash
         
