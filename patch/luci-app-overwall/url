@@ -1,0 +1,16 @@
+https://sapient-climate-268110.appspot.com
+https://ip-goji.appspot.com/text
+https://jsonp-ip.appspot.com
+https://sspanel.net/ip.php
+
+A=$(curl -Lsm 5 https://sapient-climate-268110.appspot.com);echo $(echo $A | grep -Eo "[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}") $(echo "$A" | grep ISP | sed 's/ISP: //')
+
+
+
+echo 221.13.30.242 $(curl -m 5 -LsA 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36' https://ipchaxun.com/221.13.30.242 | grep -E '归属地|运营商' | sed -e 's/.*ue">//' -e 's/<.*//')
+
+curl -m 5 -LsA 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36' https://www.123cha.com/ip/?q=221.13.30.242 | grep 123查网定位 | sed -e 's/.*: //' -e 's/<.*//' -e 's/,/ /g' -e 's/[ ][ ]*/ /g'
+
+luci:
+r=EXEC("echo -n "..r)
+r=EXEC("echo "..r.." $(curl -m 5 -LsA 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36' https://ipchaxun.com/"..r.." | grep -E '归属地|运营商' | sed -e 's/.*ue\">//' -e 's/<.*//')")

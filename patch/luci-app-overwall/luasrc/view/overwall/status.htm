@@ -1,0 +1,611 @@
+<%
+local dsp=require"luci.dispatcher"
+local uci=luci.model.uci.cursor()
+-%>
+<style>
+.pure-g{letter-spacing:-.31em;text-rendering:optimizespeed;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-orient:horizontal;-webkit-box-direction:normal;-webkit-flex-flow:row wrap;-ms-flex-flow:row wrap;flex-flow:row wrap;-webkit-align-content:flex-start;-ms-flex-line-pack:start;align-content:flex-start;margin-bottom:0.5rem}@media all and (-ms-high-contrast:none),(-ms-high-contrast:active){table .pure-g{display:block}}.opera-only :-o-prefocus,.pure-g{word-spacing:-.43em}.pure-u{display:inline-block;zoom:1;letter-spacing:normal;word-spacing:normal;vertical-align:top;text-rendering:auto}.pure-g [class*=pure-u]{font-family:sans-serif}.pure-u-1,.pure-u-1-1,.pure-u-1-12,.pure-u-1-2,.pure-u-1-24,.pure-u-1-3,.pure-u-1-4,.pure-u-1-5,.pure-u-1-6,.pure-u-1-8,.pure-u-10-24,.pure-u-11-12,.pure-u-11-24,.pure-u-12-24,.pure-u-13-24,.pure-u-14-24,.pure-u-15-24,.pure-u-16-24,.pure-u-17-24,.pure-u-18-24,.pure-u-19-24,.pure-u-2-24,.pure-u-2-3,.pure-u-2-5,.pure-u-20-24,.pure-u-21-24,.pure-u-22-24,.pure-u-23-24,.pure-u-24-24,.pure-u-3-24,.pure-u-3-4,.pure-u-3-5,.pure-u-3-8,.pure-u-4-24,.pure-u-4-5,.pure-u-5-12,.pure-u-5-24,.pure-u-5-5,.pure-u-5-6,.pure-u-5-8,.pure-u-6-24,.pure-u-7-12,.pure-u-7-24,.pure-u-7-8,.pure-u-8-24,.pure-u-9-24{display:inline-block;zoom:1;letter-spacing:normal;word-spacing:normal;vertical-align:top;text-rendering:auto}.pure-u-1-24{width:4.1667%}.pure-u-1-12,.pure-u-2-24{width:8.3333%}.pure-u-1-8,.pure-u-3-24{width:12.5%}.pure-u-1-6,.pure-u-4-24{width:16.6667%}.pure-u-1-5{width:20%}.pure-u-5-24{width:20.8333%}.pure-u-1-4,.pure-u-6-24{width:25%}.pure-u-7-24{width:29.1667%}.pure-u-1-3,.pure-u-8-24{width:30%}.pure-u-3-8,.pure-u-9-24{width:37.5%}.pure-u-2-5{width:40%}.pure-u-10-24,.pure-u-5-12{width:41.6667%}.pure-u-11-24{width:45.8333%}.pure-u-1-2,.pure-u-12-24{width:50%}.pure-u-13-24{width:54.1667%}.pure-u-14-24,.pure-u-7-12{width:58.3333%}.pure-u-3-5{width:60%}.pure-u-15-24,.pure-u-5-8{width:62.5%}.pure-u-16-24,.pure-u-2-3{width:66.6667%}.pure-u-17-24{width:70.8333%}.pure-u-18-24,.pure-u-3-4{width:75%}.pure-u-19-24{width:79.1667%}.pure-u-4-5{width:80%}.pure-u-20-24,.pure-u-5-6{width:83.3333%}.pure-u-21-24,.pure-u-7-8{width:87.5%}.pure-u-11-12,.pure-u-22-24{width:91.6667%}.pure-u-23-24{width:95.8333%}.pure-u-1,.pure-u-1-1,.pure-u-24-24,.pure-u-5-5{width:100%}
+
+.cbi-page-actions.control-group{
+	margin-bottom:0.5rem;
+}
+
+.cbi-page-actions.control-group.fixed{
+	bottom:2.9rem;
+}
+
+.block{
+	margin:0.2rem;
+	padding:0;
+	font-weight:normal;
+	font-style:normal;
+	line-height:1;
+	font-family:inherit;
+	min-width:inherit;
+	overflow-x:auto;
+	overflow-y:hidden;
+	border:1px solid rgba(0,0,0,.05);
+	border-radius:.375rem;
+	box-shadow:0 0 2rem 0 rgba(136,152,170,.15);
+}
+
+.img-con{
+	margin:0.5rem;
+}
+
+.green{
+	color:#2dce89;
+}
+
+.red{
+	color:#fb6340;
+}
+
+.yellow{
+	color:#fb9a05;
+}
+
+.block img{
+	width:48px;
+	height:auto;
+	/* float:right;*/
+}
+
+.pure-u-5-8{
+	display:flex;
+	align-items:center;
+}
+
+.block h4{
+	font-size:.8rem;
+	font-weight:600;
+	margin:0.57rem 0rem 0.57rem 1rem;
+	color:#8898aa!important;
+	line-height:1.8em;
+	padding:0;
+}
+
+.check{
+	cursor:pointer;
+}
+
+@media screen and (max-width:1080px){
+	.block h4{
+		font-weight:normal;
+	}
+
+	#check_port{
+		display:none;
+	}
+
+	.block{
+		margin:0.2rem;
+	}
+
+	.pure-u-1-4{
+		width:50%;
+	}
+
+	.pure-u-1-5{
+		width:33.3%;
+	}
+
+	.block h4{
+		margin:1rem 0rem 1rem 0.5rem;
+	}
+}
+
+@media screen and (max-width:480px){
+	.img-con{
+		margin:1.5rem 0.5rem;
+	}
+
+	.block img{
+		width:36px;
+	}
+}
+
+#check_port.pure-u-1-1 .pure-u-8-24{
+	width:10%;
+}
+
+#check_port.pure-u-1-1 .pure-u-16-24{
+	width:90%;
+}
+</style>
+
+<fieldset id="overwall_status_fieldset" class="cbi-section">
+	<div class="pure-g status">
+		<div class="pure-u-1-5">
+			<div class="block pure-g">
+				<div class="pure-u-8-24">
+					<div class="img-con">
+						<img src="/luci-static/overwall/img/1.png">
+					</div>
+				</div>
+				<div class="pure-u-16-24">
+					<h4 id="status_tcp"><%:Main Server%></h4>
+				</div>
+			</div>
+		</div>
+
+		<%if uci:get_first("overwall","global","udp_relay_server") then%>
+		<div class="pure-u-1-5">
+			<div class="block pure-g">
+				<div class="pure-u-8-24">
+					<div class="img-con">
+						<img src="/luci-static/overwall/img/2.png">
+					</div>
+				</div>
+				<div class="pure-u-16-24">
+					<h4 id="status_udp"><%:UDP Server%></h4>
+				</div>
+			</div>
+		</div>
+		<%end%>
+
+		<%if uci:get_first("overwall","global","yb_server") then%>
+		<div class="pure-u-1-5">
+			<div class="block pure-g">
+				<div class="pure-u-8-24">
+					<div class="img-con">
+						<img src="/luci-static/overwall/img/3.png">
+					</div>
+				</div>
+				<div class="pure-u-16-24">
+					<h4 id="status_yb"><%:Youtube Server%></h4>
+				</div>
+			</div>
+		</div>
+		<%end%>
+
+		<%if uci:get_first("overwall","global","nf_server") then%>
+		<div class="pure-u-1-5">
+			<div class="block pure-g">
+				<div class="pure-u-8-24">
+					<div class="img-con">
+						<img src="/luci-static/overwall/img/4.png">
+					</div>
+				</div>
+				<div class="pure-u-16-24">
+					<h4 id="status_nf"><%:Netflix Server%></h4>
+				</div>
+			</div>
+		</div>
+		<%end%>
+
+		<%if uci:get_first("overwall","global","cu_server") then%>
+		<div class="pure-u-1-5">
+			<div class="block pure-g">
+				<div class="pure-u-8-24">
+					<div class="img-con">
+						<img src="/luci-static/overwall/img/5.png">
+					</div>
+				</div>
+				<div class="pure-u-16-24">
+					<h4 id="status_cu"><%:Custom Server%></h4>
+				</div>
+			</div>
+		</div>
+		<%end%>
+
+		<%if uci:get_first("overwall","global","tg_server") then%>
+		<div class="pure-u-1-5">
+			<div class="block pure-g">
+				<div class="pure-u-8-24">
+					<div class="img-con">
+						<img src="/luci-static/overwall/img/6.png">
+					</div>
+				</div>
+				<div class="pure-u-16-24">
+					<h4 id="status_tg"><%:TG Server%></h4>
+				</div>
+			</div>
+		</div>
+		<%end%>
+
+		<div class="pure-u-1-5">
+			<div class="block pure-g">
+				<div class="pure-u-8-24">
+					<div class="img-con">
+						<img src="/luci-static/overwall/img/7.png">
+					</div>
+				</div>
+				<div class="pure-u-16-24">
+					<h4 id="status_dns">SmartDNS</h4>
+				</div>
+			</div>
+		</div>
+
+		<%if uci:get_first("overwall","global","run_mode")=="router" then%>
+		<div class="pure-u-1-5">
+			<div class="block pure-g">
+				<div class="pure-u-8-24">
+					<div class="img-con">
+						<img src="/luci-static/overwall/img/8.png">
+					</div>
+				</div>
+				<div class="pure-u-16-24">
+					<h4 id="status_ng">ChinaDNS-NG</h4>
+				</div>
+			</div>
+		</div>
+		<%end%>
+
+		<%if uci:get_first("overwall","socks5_proxy","server") then%>
+		<div class="pure-u-1-5">
+			<div class="block pure-g">
+				<div class="pure-u-8-24">
+					<div class="img-con">
+						<img src="/luci-static/overwall/img/9.png">
+					</div>
+				</div>
+				<div class="pure-u-16-24">
+					<h4 id="status_socks5"><%:Socks5 Server%></h4>
+				</div>
+			</div>
+		</div>
+		<%end%>
+
+		<%if uci:get_first("overwall","server_global","enable_server")=="1" then%>
+		<div class="pure-u-1-5">
+			<div class="block pure-g">
+				<div class="pure-u-8-24">
+					<div class="img-con">
+						<img src="/luci-static/overwall/img/10.png">
+					</div>
+				</div>
+				<div class="pure-u-16-24">
+					<h4 id="status_srv"><%:Local Servers%></h4>
+				</div>
+			</div>
+		</div>
+		<%end%>
+
+		<%if uci:get("overwall",uci:get_first("overwall","global","global_server"),"kcp_enable")=="1" then%>
+		<div class="pure-u-1-5">
+			<div class="block pure-g">
+				<div class="pure-u-8-24">
+					<div class="img-con">
+						<img src="/luci-static/overwall/img/11.png">
+					</div>
+				</div>
+				<div class="pure-u-16-24">
+					<h4 id="status_kcp">KcpTun</h4>
+				</div>
+			</div>
+		</div>
+		<%end%>
+
+		<div class="pure-u-1-5 check" onclick="check_connect('baidu')">
+			<div class="block pure-g">
+				<div class="pure-u-8-24">
+					<div class="img-con">
+						<img src="/luci-static/overwall/img/12.png">
+					</div>
+				</div>
+				<div class="pure-u-16-24">
+					<h4 id="status_baidu"><%:Baidu Delay%><br/><span id="baidu_status" class="yellow"><%:Touch Check%></span></h4>
+				</div>
+			</div>
+		</div>
+
+		<div class="pure-u-1-5 check" onclick="check_connect('google')">
+			<div class="block pure-g">
+				<div class="pure-u-8-24">
+					<div class="img-con">
+						<img src="/luci-static/overwall/img/13.png">
+					</div>
+				</div>
+				<div class="pure-u-16-24">
+					<h4 id="status_google"><%:Google Delay%><br/><span id="google_status" class="yellow"><%:Touch Check%></span></h4>
+				</div>
+			</div>
+		</div>
+
+		<div class="pure-u-1-5 check" onclick="ip(0)">
+			<div class="block pure-g">
+				<div class="pure-u-8-24">
+					<div class="img-con">
+						<img src="/luci-static/overwall/img/14.png">
+					</div>
+				</div>
+				<div class="pure-u-16-24">
+					<h4 id="status_ip0"><%:Ingress IP%><br/><span id="ip0_status" class="yellow"><%:Touch Check%></span></h4>
+				</div>
+			</div>
+		</div>
+
+		<div class="pure-u-1-5 check" onclick="ip(1)">
+			<div class="block pure-g">
+				<div class="pure-u-8-24">
+					<div class="img-con">
+						<img src="/luci-static/overwall/img/15.png">
+					</div>
+				</div>
+				<div class="pure-u-16-24">
+					<h4 id="status_ip1"><%:Egress IP%><br/><span id="ip1_status" class="yellow"><%:Touch Check%></span></h4>
+				</div>
+			</div>
+		</div>
+
+		<%if nixio.fs.access("/tmp/overwall/gfw.list") then%>
+		<div class="pure-u-1-5 check" onclick="refresh(0)">
+			<div class="block pure-g">
+				<div class="pure-u-8-24">
+					<div class="img-con">
+						<img src="/luci-static/overwall/img/16.png">
+					</div>
+				</div>
+				<div class="pure-u-16-24">
+					<h4 id="status_refresh0"><%:GFW List Data%><br/><span id="refresh0_status" class="green"><%=luci.sys.exec("cat /tmp/overwall/gfw.list | wc -l")%><%:Records%></span></h4>
+				</div>
+			</div>
+		</div>
+		<%end%>
+
+		<%if nixio.fs.access("/tmp/overwall/china.txt") then%>
+		<div class="pure-u-1-5 check" onclick="refresh(1)">
+			<div class="block pure-g">
+				<div class="pure-u-8-24">
+					<div class="img-con">
+						<img src="/luci-static/overwall/img/17.png">
+					</div>
+				</div>
+				<div class="pure-u-16-24">
+					<h4 id="status_refresh1"><%:China IPv4 Data%><br/><span id="refresh1_status" class="green"><%=luci.sys.exec("cat /tmp/overwall/china.txt | wc -l")%><%:Records%></span></h4>
+				</div>
+			</div>
+		</div>
+		<%end%>
+
+		<%if nixio.fs.access("/tmp/overwall/china_v6.txt") then%>
+		<div class="pure-u-1-5 check" onclick="refresh(2)">
+			<div class="block pure-g">
+				<div class="pure-u-8-24">
+					<div class="img-con">
+						<img src="/luci-static/overwall/img/18.png">
+					</div>
+				</div>
+				<div class="pure-u-16-24">
+					<h4 id="status_refresh2"><%:China IPv6 Data%><br/><span id="refresh2_status" class="green"><%=luci.sys.exec("cat /tmp/overwall/china_v6.txt | wc -l")%><%:Records%></span></h4>
+				</div>
+			</div>
+		</div>
+		<%end%>
+
+		<div class="pure-u-1-5 check" id="check_port" onclick="check_port(this)">
+			<div class="block pure-g">
+				<div class="pure-u-8-24">
+					<div class="img-con">
+						<img src="/luci-static/overwall/img/19.png">
+					</div>
+				</div>
+				<div class="pure-u-16-24">
+					<h4><%:Node Delay%><br/><span id="check_nodes" class="yellow"><%:Touch Check%></span></h4>
+					<button id="clear_check_port_btn" type="button" class="cbi-button cbi-button-remove" style="display:none"><%:Clear%></button>
+				</div>
+			</div>
+		</div>
+	</div>
+<script>
+//<![CDATA[
+	var imgs=document.getElementsByTagName('img');
+	for (var i=0;i < imgs.length;i++){
+		document.getElementsByTagName('img')[i].setAttribute("oncontextmenu","return false;");
+		document.getElementsByTagName('img')[i].setAttribute("ondragstart","return false;");
+	}
+	XHR.poll(5,'<%=dsp.build_url("admin/services/overwall/status")%>',null,
+		function (x,data){
+			if (data){
+				if (data.tcp){
+					status_tcp.innerHTML='<%:Main Server%><br/><span class="green"><%:RUNNING%></span>';
+				}else{
+					status_tcp.innerHTML='<%:Main Server%><br/><span class="red"><%:NOT RUNNING%></span>';
+				}
+
+				var s=document.getElementById('status_udp')
+				if (s){
+					if (data.udp){
+						s.innerHTML='<%:UDP Server%><br/><span class="green"><%:RUNNING%></span>';
+					}else{
+						s.innerHTML='<%:UDP Server%><br/><span class="red"><%:NOT RUNNING%></span>';
+					}
+				}
+
+				s=document.getElementById('status_yb')
+				if (s){
+					if (data.yb){
+						s.innerHTML='<%:Youtube Server%><br/><span class="green"><%:RUNNING%></span>';
+					}else{
+						s.innerHTML='<%:Youtube Server%><br/><span class="red"><%:NOT RUNNING%></span>';
+					}
+				}
+
+				s=document.getElementById('status_nf')
+				if (s){
+					if (data.nf){
+						s.innerHTML='<%:Netflix Server%><br/><span class="green"><%:RUNNING%></span>';
+					}else{
+						s.innerHTML='<%:Netflix Server%><br/><span class="red"><%:NOT RUNNING%></span>';
+					}
+				}
+
+				s=document.getElementById('status_cu')
+				if (s){
+					if (data.cu){
+						s.innerHTML='<%:Custom Server%><br/><span class="green"><%:RUNNING%></span>';
+					}else{
+						s.innerHTML='<%:Custom Server%><br/><span class="red"><%:NOT RUNNING%></span>';
+					}
+				}
+
+				s=document.getElementById('status_tg')
+				if (s){
+					if (data.tg){
+						s.innerHTML='<%:TG Server%><br/><span class="green"><%:RUNNING%></span>';
+					}else{
+						s.innerHTML='<%:TG Server%><br/><span class="red"><%:NOT RUNNING%></span>';
+					}
+				}
+
+				if (data.dns){
+					status_dns.innerHTML='SmartDNS<br/><span class="green"><%:RUNNING%></span>';
+				}else{
+					status_dns.innerHTML='SmartDNS<br/><span class="red"><%:NOT RUNNING%></span>';
+				}
+
+				s=document.getElementById('status_ng')
+				if (s){
+					if (data.ng){
+						s.innerHTML='ChinaDNS-NG<br/><span class="green"><%:RUNNING%></span>';
+					}else{
+						s.innerHTML='ChinaDNS-NG<br/><span class="red"><%:NOT RUNNING%></span>';
+					}
+				}
+
+				s=document.getElementById('status_socks5')
+				if (s){
+					if (data.socks5){
+						s.innerHTML='<%:Socks5 Server%><br/><span class="green"><%:RUNNING%></span>';
+					}else{
+						s.innerHTML='<%:Socks5 Server%><br/><span class="red"><%:NOT RUNNING%></span>';
+					}
+				}
+
+				s=document.getElementById('status_srv')
+				if (s){
+					if (data.srv){
+						s.innerHTML='<%:Local Servers%><br/><span class="green"><%:RUNNING%></span>';
+					}else{
+						s.innerHTML='<%:Local Servers%><br/><span class="red"><%:NOT RUNNING%></span>';
+					}
+				}
+
+				s=document.getElementById('status_kcp')
+				if (s){
+					if (data.kcp){
+						s.innerHTML='KcpTun<br/><span class="green"><%:RUNNING%></span>';
+					}else{
+						s.innerHTML='KcpTun<br/><span class="red"><%:NOT RUNNING%></span>';
+					}
+				}
+			}
+		});
+
+		function check_connect(url){
+			var s=document.getElementById(url+'_status');
+			if (s){
+				var div=s.parentNode.parentNode.parentNode.parentNode;
+				div.removeAttribute('onclick');
+				s.innerHTML='<%:Check...%>';
+				XHR.get('<%=dsp.build_url("admin/services/overwall/check")%>',
+					{url:url},
+					function(x,rv){
+						if (rv.ret==0){
+							s.className="red";
+							s.innerHTML='<%:Connect Error%>';
+						}else{
+							if (rv.ret<100){
+								s.className="green";
+							}else if (rv.ret<200){
+								s.className="yellow";
+							}else{
+								s.className="red";
+							}
+							s.innerHTML=rv.ret+" ms";
+						}
+						div.setAttribute('onclick','check_connect("'+url+'")');
+					}
+				);
+			}
+			return false;
+		}
+
+		function ip(set){
+			var s=document.getElementById('ip'+set+'_status');
+			if (s){
+				var div=s.parentNode.parentNode.parentNode.parentNode;
+				div.removeAttribute('onclick');
+				s.innerHTML='<%:Check...%>';
+				XHR.get('<%=dsp.build_url("admin/services/overwall/ip")%>',
+					{set:set},
+					function(x,rv){
+						if (rv.ret){
+							s.innerHTML='<a href="https://www.ipip.net/ip/'+rv.ret+'.html" target="_blank"><span class="green">'+rv.ret+'</font></a>';
+						}else{
+							s.innerHTML='<span class="red"><%:Check Error%></font>';
+							div.setAttribute('onclick','ip('+set+')');
+						}
+					}
+				);
+			}
+			return false;
+		}
+
+		function refresh(set){
+			var s=document.getElementById('refresh'+set+'_status');
+			if (s){
+				var div=s.parentNode.parentNode.parentNode.parentNode;
+				div.removeAttribute('onclick');
+				s.innerHTML='<%:Refresh...%>';
+				XHR.get('<%=dsp.build_url("admin/services/overwall/refresh")%>',
+					{set:set},
+					function(x,rv){
+						if (rv.ret=="0")
+							s.innerHTML='<span class="green"><%:No New data!%></font>';
+						else if(rv.ret=="-1"){
+							s.innerHTML='<span class="red"><%:Refresh Error!%></font>';
+						}else{
+							s.innerHTML='<span class="green"><%:Refresh OK!%><%:Total Records:%>'+rv.ret+'</font>';
+						}
+						div.setAttribute('onclick','refresh('+set+')');
+					}
+				);
+			}
+			return false;
+		}
+
+		function check_port(dom){
+			var s=document.getElementById('check_nodes');
+			var p=document.getElementById('check_port');
+			if (s){
+				dom.removeAttribute('onclick');
+				s.innerHTML='<%:Check...%>';
+				XHR.get('<%=dsp.build_url("admin/services/overwall/checksrv")%>',null,
+					function(x,rv){
+						if (rv.ret){
+							p.classList.add("pure-u-1-1");
+							s.innerHTML=rv.ret;
+							var clear_btn=document.getElementById('clear_check_port_btn');
+							clear_btn.style.display="inline-block";
+							clear_btn.onclick=function(event){
+								clear_check_port(clear_btn);
+								if(event.stopPropagation)
+									event.stopPropagation();
+								else
+									event.cancelBubble=true;
+									dom.setAttribute('onclick','check_port(this)')
+							}
+						}
+					}
+				);
+			}
+			return false;
+		}
+
+		function clear_check_port(btn){
+			btn.style.display='none';
+			var s=document.getElementById('check_nodes');
+			var p=document.getElementById('check_port')
+			p.classList.remove("pure-u-1-1");
+			s.innerHTML="<%:Touch Check%>";
+			return false;
+		}
+
+		setTimeout(function(){
+			check_connect('baidu')
+			check_connect('google')
+		},500);
+//]]>
+</script>
+</fieldset>

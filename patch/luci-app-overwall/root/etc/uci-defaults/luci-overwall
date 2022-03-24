@@ -1,0 +1,12 @@
+uci batch <<EOF
+	delete ucitrack.@overwall[-1]
+	add ucitrack overwall
+	set ucitrack.@overwall[-1].init=overwall
+	commit ucitrack
+	delete firewall.overwall
+	set firewall.overwall=include
+	set firewall.overwall.type=script
+	set firewall.overwall.path=/var/etc/overwall.include
+	set firewall.overwall.reload=1
+	commit firewall
+EOF
