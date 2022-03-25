@@ -7,7 +7,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-passwall
 PKG_VERSION:=4.51
-PKG_RELEASE:=3
+PKG_RELEASE:=4
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -171,7 +171,7 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_BIN) ./root/etc/init.d/passwall_server $(1)/etc/init.d/passwall_server
 	
 	$(INSTALL_DIR) $(1)/usr/share/passwall
-	cp -pR ./root/usr/share/passwall/* $(1)/usr/share/passwall
+	cp -pR ./root/usr/share/* $(1)/usr/share
 	
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci
 	cp -pR ./luasrc/* $(1)/usr/lib/lua/luci/
