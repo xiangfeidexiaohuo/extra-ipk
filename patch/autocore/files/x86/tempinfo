@@ -1,0 +1,7 @@
+#!/bin/sh
+TEMP="$(sensors 2>/dev/null | grep 'Core 0' )"
+     if  [ -n "${TEMP}" ] ;then
+        TEMP="$(sensors 2>/dev/null | grep 'Core 0' | cut -c12-  | awk  -F '°' '{print $1}')"
+	
+        printf '%.f' $TEMP
+    fi
