@@ -748,7 +748,7 @@
 	<table width="100%" cellspacing="10">
 		<tr><td width="33%"><%:Hostname%></td><td><%=luci.sys.hostname() or "?"%></td></tr>
 		<tr><td width="33%"><%:Model%></td><td><%=pcdata(boardinfo.model or "?")%></td></tr>
-		<tr><td width="33%"><%:CPU Info%></td><td><%=luci.sys.exec("/sbin/cpuinfo") or ""%> <%=luci.sys.exec("cat /etc/bench.log |awk -F '.' '{print $1}'") or ""%></td></tr>
+		<tr><td width="33%"><%:CPU Info%></td><td><%=pcdata(boardinfo.model or "?")%> <%=luci.sys.exec("cat /etc/bench.log |awk -F '.' '{print $1}'") or ""%></td></tr>
 		<tr><td width="33%"><%:Architecture%></td><td><%=pcdata(boardinfo.release.target or "?")%></td></tr>
 		<% if has_temp then %>
 		<tr><td width="33%"><%:CPU Temperature%></td><td><%=luci.sys.exec("/sbin/tempinfo")%></td></tr>
