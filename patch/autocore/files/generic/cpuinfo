@@ -1,7 +1,7 @@
 #!/bin/sh
 
 cpu_arch="$(grep "model name" "/proc/cpuinfo" | head -n1 | awk -F ': ' '{print $2}' | xargs)"
-[ -z "${cpu_arch}" ] && cpu_arch="?"
+[ -z "${cpu_arch}" ] && cpu_arch="ARMv8 Processor"
 if grep -q "x86" "/etc/openwrt_release"; then
 	cpu_cores="$(grep "core id" "/proc/cpuinfo" | sort -u | wc -l)核 $(grep -c "processor" "/proc/cpuinfo")线程"
 else
