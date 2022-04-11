@@ -194,7 +194,7 @@ kill_clash()
    for clash_pid in $clash_pids; do
       kill -9 "$clash_pid" 2>/dev/null
    done >/dev/null 2>&1
-   sleep 2
+   sleep 1
 }
 
 start_fail()
@@ -1483,7 +1483,7 @@ start_run_core()
       rm -rf "$TMP_CONFIG_FILE" 2>/dev/null
    fi
    config_reload=$(uci -q get openclash.config.config_reload)
-   if [ -n "$(pidof clash)" ] && [ "$core_type" != "TUN" ] && [ "$config_reload" != "0" ]; then
+   if [ -n "$(pidof clash)" ] && [ "$core_type" != "TUN" ] && [ "$core_type" != "Meta" ] && [ "$config_reload" != "0" ]; then
       curl -s --connect-timeout 5 -m 5 -H 'Content-Type: application/json' -H "Authorization: Bearer ${da_password}" -XPUT http://"$lan_ip":"$cn_port"/configs -d "{\"path\": \"$CONFIG_FILE\"}" 2>/dev/null
    else
       kill_clash
@@ -2061,6 +2061,10 @@ if [ -n "$en_mode_tun" ]; then
    done
    ip route replace default dev utun table "$PROXY_ROUTE_TABLE"
    ip rule add fwmark "$PROXY_FWMARK" table "$PROXY_ROUTE_TABLE"
+   
+   if [ "$enable_meta_core" == "1" ]; then
+      route add -net 198.18.0.0/16 dev utun
+   fi
    
    #设置防火墙
    if [ "$en_mode" = "fake-ip" ]; then
