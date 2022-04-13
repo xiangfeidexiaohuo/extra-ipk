@@ -56,7 +56,6 @@ jobs:
         rm -rf ./patch/luci-app-bypass
         rm -rf ./patch/luci-app-passwall
         rm -rf ./patch/luci-app-passwall2
-        rm -rf ./gargoyle-qos
         
  
         git clone https://github.com/zzsj0928/luci-app-pushbot ./luci-app-pushbot
@@ -109,8 +108,6 @@ jobs:
         svn export https://github.com/coolsnowwolf/packages/trunk/net/redsocks2 ./patch/redsocks2
         svn export https://github.com/kiddin9/openwrt-bypass/trunk/luci-app-bypass ./patch/luci-app-bypass
         svn export https://github.com/xiaorouji/openwrt-passwall2/trunk/luci-app-passwall2 ./patch/luci-app-passwall2
-        
-        git clone https://github.com/yaof2/gargoyle-qos ./gargoyle-qos
         
 
     - name: Apply
