@@ -45,7 +45,14 @@ jobs:
         rm -rf ./theme-18.06/luci-theme-infinityfreedom
         rm -rf ./theme-18.06/luci-theme-neobird
         rm -rf ./lisaac/*  
-        rm -rf ./linkease/*
+        rm -rf ./linkease/app-store-ui
+        rm -rf ./linkease/ddnsto
+        rm -rf ./linkease/linkease
+        rm -rf ./linkease/quickstart
+        rm -rf ./linkease/luci-app-ddnsto
+        rm -rf ./linkease/luci-app-linkease
+        rm -rf ./linkease/luci-app-quickstart
+        rm -rf ./linkease/luci-app-store
         rm -rf ./jerrykuku/*
         rm -rf ./op-oaf
         rm -rf ./op-fileBrowser/*
