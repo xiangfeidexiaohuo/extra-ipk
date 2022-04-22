@@ -48,10 +48,8 @@ jobs:
         rm -rf ./linkease/app-store-ui
         rm -rf ./linkease/ddnsto
         rm -rf ./linkease/linkease
-        rm -rf ./linkease/quickstart
         rm -rf ./linkease/luci-app-ddnsto
         rm -rf ./linkease/luci-app-linkease
-        rm -rf ./linkease/luci-app-quickstart
         rm -rf ./linkease/luci-app-store
         rm -rf ./jerrykuku/*
         rm -rf ./op-oaf
@@ -79,10 +77,8 @@ jobs:
         
         svn export https://github.com/linkease/nas-packages-luci/trunk/luci/luci-app-ddnsto ./linkease/luci-app-ddnsto
         svn export https://github.com/linkease/nas-packages-luci/trunk/luci/luci-app-linkease ./linkease/luci-app-linkease
-        svn export https://github.com/linkease/nas-packages-luci/trunk/luci/luci-app-quickstart ./linkease/luci-app-quickstart
         svn export https://github.com/linkease/nas-packages/trunk/network/services/ddnsto ./linkease/ddnsto
         svn export https://github.com/linkease/nas-packages/trunk/network/services/linkease ./linkease/linkease
-        svn export https://github.com/linkease/nas-packages/trunk/network/services/quickstart ./linkease/quickstart
         svn export https://github.com/linkease/istore/trunk/luci/luci-app-store ./linkease/luci-app-store
         svn export https://github.com/linkease/istore-ui/trunk/app-store-ui ./linkease/app-store-ui 
               
