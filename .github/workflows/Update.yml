@@ -55,6 +55,7 @@ jobs:
         rm -rf ./op-oaf
         rm -rf ./op-fileBrowser/*
         rm -rf ./op-aliyun/*
+        rm -rf ./op-socat/*
         rm -rf ./patch/wall
         rm -rf ./patch/luci-app-ssr-plus
         rm -rf ./patch/redsocks2
@@ -111,6 +112,9 @@ jobs:
         svn export https://github.com/coolsnowwolf/packages/trunk/net/redsocks2 ./patch/redsocks2
         svn export https://github.com/kiddin9/openwrt-bypass/trunk/luci-app-bypass ./patch/luci-app-bypass
         svn export https://github.com/xiaorouji/openwrt-passwall2/trunk/luci-app-passwall2 ./patch/luci-app-passwall2
+        
+        svn export https://github.com/Lienol/openwrt-package/trunk/luci-app-socat op-socat/luci-app-socat
+        svn export https://github.com/coolsnowwolf/packages/trunk/net/socat op-socat/socat
         
 
     - name: Apply
