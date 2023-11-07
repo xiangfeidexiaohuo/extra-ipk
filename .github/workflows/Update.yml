@@ -1,0 +1,166 @@
+name: Update
+
+on: 
+  repository_dispatch:
+  workflow_dispatch:
+
+# 定时触发编译
+  schedule:
+    - cron: 0 */1 * * *
+
+# 点赞☆Star触发编译
+#  watch:
+#    types: [started]
+
+jobs:
+  Update:
+    runs-on: ubuntu-20.04
+    steps:
+    - name: Clone Repository
+      uses: actions/checkout@v3
+
+    - name: Set git
+      run : |
+        git config --global user.email "jsjson@163.com"
+        git config --global user.name "xiangfeidexiaohuo"
+        sudo timedatectl set-timezone "Asia/Shanghai"
+
+    - name: Delete workflow runs
+      uses: xiangfeidexiaohuo/delete-workflow-runs@main
+      continue-on-error: true
+      with:
+        retain_days: 1
+        keep_minimum_runs: 0  
+        
+    - name: Update
+      run: |
+
+        rm -rf ./luci-app-pushbot
+        rm -rf ./luci-app-wechatpush
+        # rm -rf ./luci-app-easymesh
+        rm -rf ./luci-app-ikoolproxy
+        rm -rf ./luci-app-kodexplorer
+        rm -rf ./luci-app-unblockneteasemusic
+        rm -rf ./lisaac/*  
+        rm -rf ./linkease/*   
+        rm -rf ./op-oaf
+        rm -rf ./op-fileBrowser/*
+        rm -rf ./op-aliyun/*
+        rm -rf ./op-socat/socat
+        rm -rf ./op-mosdns
+        rm -rf ./op-alist/*
+        rm -rf ./op-ddnsgo/*
+        rm -rf ./op-lucky/*
+        rm -rf ./op-xunlei/*
+        rm -rf ./patch/wall
+        rm -rf ./patch/wall-luci/luci-app-passwall
+        rm -rf ./patch/wall-luci/luci-app-passwall2
+        rm -rf ./patch/wall-luci/luci-app-ssr-plus
+        rm -rf ./patch/wall-luci/luci-app-openclash
+        rm -rf ./op-smartdns/luci-app-smartdns
+        rm -rf ./theme/luci-theme-argon-18.06
+        rm -rf ./theme/luci-theme-argon
+        rm -rf ./luci-app-oled
+        rm -rf ./op-go-aliyundrive/*
+        
+         
+        git clone https://github.com/zzsj0928/luci-app-pushbot ./luci-app-pushbot
+        git clone https://github.com/tty228/luci-app-wechatpush ./luci-app-wechatpush
+        # git clone https://github.com/stevenke1981/luci-app-easymesh ./luci-app-easymesh
+        git clone https://github.com/ilxp/luci-app-ikoolproxy ./luci-app-ikoolproxy
+        rm -rf ./luci-app-ikoolproxy/.github       
+        svn export https://github.com/Lienol/openwrt-package/trunk/luci-app-kodexplorer ./luci-app-kodexplorer
+
+      
+        svn export https://github.com/lisaac/luci-lib-docker/trunk/collections/luci-lib-docker ./lisaac/luci-lib-docker
+        svn export https://github.com/lisaac/luci-app-diskman/trunk/applications/luci-app-diskman ./lisaac/luci-app-diskman
+        svn export https://github.com/lisaac/luci-app-dockerman/trunk/applications/luci-app-dockerman ./lisaac/luci-app-dockerman
+
+       
+        svn export https://github.com/linkease/nas-packages-luci/trunk/luci ./linkease/nas-packages-luci
+        svn export https://github.com/linkease/nas-packages/trunk/network/services ./linkease/nas-packages
+        svn export https://github.com/linkease/nas-packages/trunk/multimedia/ffmpeg-remux ./linkease/nas-packages/ffmpeg-remux    
+        svn export https://github.com/linkease/istore/trunk/luci ./linkease/iStore
+        svn export https://github.com/linkease/istore-ui/trunk/app-store-ui ./linkease/iStore/app-store-ui
+ 
+             
+
+        git clone https://github.com/jerrykuku/go-aliyundrive-webdav ./op-go-aliyundrive/go-aliyundrive-webdav
+        git clone https://github.com/jerrykuku/luci-app-go-aliyundrive-webdav ./op-go-aliyundrive/luci-app-go-aliyundrive-webdav
+
+
+        git clone https://github.com/destan19/OpenAppFilter ./op-oaf
+
+                         
+        svn export https://github.com/kiddin9/openwrt-packages/trunk/filebrowser ./op-fileBrowser/filebrowser
+        svn export https://github.com/kiddin9/openwrt-packages/trunk/luci-app-filebrowser ./op-fileBrowser/luci-app-filebrowser
+
+        
+        svn export https://github.com/messense/aliyundrive-webdav/trunk/openwrt/aliyundrive-webdav ./op-aliyun/aliyundrive-webdav
+        svn export https://github.com/messense/aliyundrive-webdav/trunk/openwrt/luci-app-aliyundrive-webdav ./op-aliyun/luci-app-aliyundrive-webdav
+        svn export https://github.com/messense/aliyundrive-fuse/trunk/openwrt/aliyundrive-fuse ./op-aliyun/aliyundrive-fuse
+        svn export https://github.com/messense/aliyundrive-fuse/trunk/openwrt/luci-app-aliyundrive-fuse ./op-aliyun/luci-app-aliyundrive-fuse
+
+        
+        git clone https://github.com/xiaorouji/openwrt-passwall-packages ./patch/wall
+        rm -rf ./patch/wall/.github
+        svn export https://github.com/fw876/helloworld/branches/main/redsocks2 ./patch/wall/redsocks2
+        svn export https://github.com/fw876/helloworld/branches/main/lua-neturl ./patch/wall/lua-neturl
+        svn export https://github.com/fw876/helloworld/branches/main/shadow-tls ./patch/wall/shadow-tls
+        
+        svn export https://github.com/xiaorouji/openwrt-passwall/trunk/luci-app-passwall ./patch/wall-luci/luci-app-passwall
+        svn export https://github.com/xiaorouji/openwrt-passwall2/trunk/luci-app-passwall2 ./patch/wall-luci/luci-app-passwall2      
+        svn export https://github.com/fw876/helloworld/branches/main/luci-app-ssr-plus ./patch/wall-luci/luci-app-ssr-plus
+        svn export https://github.com/vernesong/OpenClash/branches/dev/luci-app-openclash ./patch/wall-luci/luci-app-openclash
+        # svn export https://github.com/kiddin9/openwrt-packages/trunk/luci-app-bypass ./patch/wall-luci/luci-app-bypass
+        # git clone https://github.com/jerrykuku/luci-app-vssr ./patch/wall-luci/luci-app-vssr
+        # git clone https://github.com/jerrykuku/lua-maxminddb ./patch/wall-luci/lua-maxminddb
+        # rm -rf ./patch/wall-luci/luci-app-vssr/.github
+        # rm -rf ./patch/wall-luci/luci-app-vssr/README.md
+        # rm -rf ./patch/wall-luci/luci-app-vssr/relnotes.txt
+        
+        
+        ## svn export https://github.com/jjm2473/immortalwrt-luci/branches/socat-fn/applications/luci-app-socat ./op-socat/luci-app-socat
+        svn export https://github.com/immortalwrt/packages/trunk/net/socat ./op-socat/socat
+        
+
+        git clone https://github.com/sbwml/luci-app-mosdns ./op-mosdns
+        git clone https://github.com/sbwml/v2ray-geodata ./op-mosdns/v2ray-geodata
+        rm -rf ./op-mosdns/install.sh
+        rm -rf ./op-mosdns/.github
+        git clone https://github.com/sbwml/openwrt-alist ./op-alist/
+        rm -rf ./op-alist/.github
+        git clone https://github.com/UnblockNeteaseMusic/luci-app-unblockneteasemusic ./luci-app-unblockneteasemusic/
+        rm -rf ./luci-app-unblockneteasemusic/.github
+ 
+       
+        git clone https://github.com/sirpdboy/luci-app-ddns-go ./op-ddnsgo/
+        git clone https://github.com/sirpdboy/luci-app-lucky ./op-lucky/
+
+       
+        git clone https://github.com/pymumu/luci-app-smartdns -b lede ./op-smartdns/luci-app-smartdns
+        rm -rf ./op-smartdns/luci-app-smartdns/.git
+
+
+        git clone https://github.com/jerrykuku/luci-theme-argon ./theme/luci-theme-argon
+        git clone https://github.com/jerrykuku/luci-theme-argon -b 18.06 ./theme/luci-theme-argon-18.06
+        # git clone https://github.com/jerrykuku/luci-app-argon-config ./theme/luci-app-argon-config
+        # git clone https://github.com/jerrykuku/luci-app-argon-config -b 18.06 ./theme/luci-app-argon-config-18.06       
+        rm -rf ./theme/luci-theme-argon/.github
+        rm -rf ./theme/luci-theme-argon/.gitignore
+        rm -rf ./theme/luci-theme-argon-18.06/.github
+        rm -rf ./theme/luci-theme-argon-18.06/.gitignore
+        # rm -rf ./theme/luci-app-argon-config/.github
+        # rm -rf ./theme/luci-app-argon-config-18.06/.github
+           
+        svn export https://github.com/unifreq/luci-app-oled/trunk/luci-app-oled ./luci-app-oled
+        
+        svn export https://github.com/gngpp/xunlei/trunk/openwrt/luci-app-xunlei ./op-xunlei/luci-app-xunlei
+        svn export https://github.com/gngpp/xunlei/trunk/openwrt/xunlei ./op-xunlei/xunlei
+        
+    - name: Apply
+      run: |
+        git add .
+        git commit -m "Auto Sync: $(date +%Y-%m-%d" "%H:%M)"
+        git push -f 
+              

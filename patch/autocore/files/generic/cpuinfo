@@ -1,0 +1,34 @@
+#!/bin/sh
+
+cpu_arch="$(grep "model name" "/proc/cpuinfo" | head -n1 | awk -F ': ' '{print $2}' | xargs)"
+[ -z "${cpu_arch}" ] && cpu_arch="ARMv8 Processor"
+if grep -q "x86" "/etc/openwrt_release"; then
+	cpu_cores="$(grep "core id" "/proc/cpuinfo" | sort -u | wc -l)核 $(grep -c "processor" "/proc/cpuinfo")线程"
+else
+	cpu_cores="$(grep -c "processor" "/proc/cpuinfo")核"
+fi
+
+if grep -q "bcm27xx" "/etc/openwrt_release"; then
+	cpu_freq="$(expr $(vcgencmd measure_clock arm | awk -F '=' '{print $2}') / 1000000)Mhz"
+elif grep -q "bcm53xx" "/etc/openwrt_release"; then
+	cpu_freq="$(nvram get clkfreq | awk -F ',' '{print $1}')MHz"
+elif grep -q "mvebu" "/etc/openwrt_release"; then
+	cpu_freq="$(grep "BogoMIPS" "/proc/cpuinfo" | sed -n "1p" | awk -F ': ' '{print $2}' |awk -F '.' '{print $1}')MHz"
+elif grep -q "filogic" "/etc/openwrt_release"; then
+	cpu_freq="$(mhz | awk -F 'cpu_MHz=' '{printf("%.fMHz",$2)}')"
+elif grep -q "x86" "/etc/openwrt_release"; then
+	cpu_freq="$(grep "MHz" "/proc/cpuinfo" | head -n1 | awk -F ': ' '{print $2}' |awk -F '.' '{print $1}')MHz"
+elif [ -e "/sys/devices/system/cpu/cpufreq/policy0/cpuinfo_cur_freq" ]; then
+	cpu_freq="$(awk '{printf("%.fMHz", $0 / 1000)}' "/sys/devices/system/cpu/cpufreq/policy0/cpuinfo_cur_freq")"
+fi
+if ! grep -q "x86" "/etc/openwrt_release" && [ -e "/sys/devices/system/cpu/cpufreq/policy4/cpuinfo_cur_freq" ]; then
+	big_cpu_freq="$(awk '{printf("%.fMHz ", $0 / 1000)}' "/sys/devices/system/cpu/cpufreq/policy4/cpuinfo_cur_freq")"
+fi
+
+if [ -z "${cpu_freq}" ] ; then
+	echo -n "${cpu_arch} x ${cpu_cores}"
+elif grep -Eq "ipq|mt7622" "/etc/openwrt_release" ; then
+	echo -n "${cpu_arch} x ${cpu_cores} (${cpu_freq})"
+else
+	echo -n "${cpu_arch} x ${cpu_cores} (${big_cpu_freq}${cpu_freq})"
+fi

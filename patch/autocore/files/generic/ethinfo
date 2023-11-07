@@ -1,0 +1,40 @@
+#!/bin/sh
+ETMP=/tmp/state_ethinfo
+a=$(ip address | grep ^[0-9] | awk -F: '{print $2}' | sed "s/ //g" | grep '^[e]' | grep -v "@" | grep -v "\.")
+b=$(echo "$a" | wc -l)
+
+echo -n "[" > $ETMP
+
+for i in $(seq 1 $b)
+do
+	h=$(echo '{"face":' )
+	c=$(echo "$a" | sed -n ${i}p)
+	d=$(ethtool $c)
+        face=$(uci show network | grep "$c" | head -n1 |awk -F '.'  '{print $2}' )
+	m=$(ifconfig | grep "$c" | head -n1 | awk -F 'HWaddr ' '{print $2}')
+	e=$(echo "$d" | grep "Link detected" | awk -F: '{printf $2}' | sed 's/^[ \t]*//g')
+	if [ $e = yes ]; then
+		l=1
+	else
+		l=0
+	fi
+
+	f=$(echo "$d" | grep "Speed" | awk -F: '{printf $2}' | sed 's/^[ \t]*//g' | tr -d "Unknown!")
+	[ -z "$f" ] && f=" - "
+
+	g=$(echo "$d" | grep "Duplex" | awk -F: '{printf $2}' | sed 's/^[ \t]*//g')
+	if [ "$g" == "Full" ]; then
+		x=1
+	else
+		x=0
+	fi
+
+
+	echo -n "$h \"$face\", \"status\": $l, \"name\": \"$c\", \"duplex\": $x, \"speed\": \"$f\", \"mac\": \"$m\"}," >> $ETMP
+done
+
+sed -i 's/.$//' $ETMP
+
+echo -n "]" >> $ETMP
+
+cat $ETMP

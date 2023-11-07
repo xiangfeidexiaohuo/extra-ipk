@@ -1,0 +1,5 @@
+#!/bin/sh
+
+chmod 777 /etc/init.d/idns
+rm -f /tmp/luci-indexcache
+exit 0
