@@ -41,7 +41,7 @@ jobs:
         rm -rf ./luci-app-ikoolproxy
         rm -rf ./luci-app-kodexplorer
         rm -rf ./luci-app-unblockneteasemusic
-        rm -rf ./lisaac/*  
+        rm -rf ./luci-app-diskman 
         rm -rf ./linkease/*   
         rm -rf ./op-oaf
         rm -rf ./op-fileBrowser/*
@@ -78,10 +78,8 @@ jobs:
         rm -rf ./luci-app-ikoolproxy/README.md       
         svn export https://github.com/Lienol/openwrt-package/trunk/luci-app-kodexplorer ./luci-app-kodexplorer
 
-      
-        svn export https://github.com/lisaac/luci-lib-docker/trunk/collections/luci-lib-docker ./lisaac/luci-lib-docker
-        svn export https://github.com/lisaac/luci-app-diskman/trunk/applications/luci-app-diskman ./lisaac/luci-app-diskman
-        svn export https://github.com/lisaac/luci-app-dockerman/trunk/applications/luci-app-dockerman ./lisaac/luci-app-dockerman
+     
+        svn export https://github.com/lisaac/luci-app-diskman/trunk/applications/luci-app-diskman ./luci-app-diskman
 
        
         svn export https://github.com/linkease/nas-packages-luci/trunk/luci ./linkease/nas-packages-luci
@@ -127,8 +125,6 @@ jobs:
         # rm -rf ./patch/wall-luci/luci-app-vssr/README.md
         # rm -rf ./patch/wall-luci/luci-app-vssr/relnotes.txt
         
-        
-        ## svn export https://github.com/jjm2473/immortalwrt-luci/branches/socat-fn/applications/luci-app-socat ./op-socat/luci-app-socat
         svn export https://github.com/immortalwrt/packages/trunk/net/socat ./op-socat/socat
         
 
@@ -157,16 +153,12 @@ jobs:
 
 
         git clone https://github.com/jerrykuku/luci-theme-argon ./theme/luci-theme-argon
-        git clone https://github.com/jerrykuku/luci-theme-argon -b 18.06 ./theme/luci-theme-argon-18.06
-        # git clone https://github.com/jerrykuku/luci-app-argon-config ./theme/luci-app-argon-config
-        # git clone https://github.com/jerrykuku/luci-app-argon-config -b 18.06 ./theme/luci-app-argon-config-18.06       
+        git clone https://github.com/jerrykuku/luci-theme-argon -b 18.06 ./theme/luci-theme-argon-18.06          
         rm -rf ./theme/luci-theme-argon/.github
         rm -rf ./theme/luci-theme-argon/.gitignore
         rm -rf ./theme/luci-theme-argon-18.06/.github
         rm -rf ./theme/luci-theme-argon-18.06/.gitignore
-        # rm -rf ./theme/luci-app-argon-config/.github
-        # rm -rf ./theme/luci-app-argon-config-18.06/.github
-           
+
         svn export https://github.com/unifreq/luci-app-oled/trunk/luci-app-oled ./luci-app-oled
         
         svn export https://github.com/gngpp/xunlei/trunk/openwrt/luci-app-xunlei ./op-xunlei/luci-app-xunlei

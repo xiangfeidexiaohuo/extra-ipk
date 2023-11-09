@@ -1,3 +1,17 @@
+include $(TOPDIR)/rules.mk
+
+LUCI_TITLE:=Docker Manager interface for LuCI
+LUCI_DEPENDS:=+luci-compat +luci-lib-docker +luci-lib-ip +docker +dockerd +cgroupfs-mount +ttyd
+LUCI_PKGARCH:=all
+
+PKG_NAME:=luci-app-dockerman
+PKG_VERSION:=v0.5.26
+PKG_RELEASE:=1
+
+PKG_LICENSE:=AGPL-3.0
+PKG_MAINTAINER:=lisaac <lisaac.cn@gmail.com>
+
+define Package/luci-app-dockerman/postinst
 #!/bin/sh
 
 /init.sh env
@@ -12,3 +26,8 @@ uci set dockerd.dockerman.remote_endpoint=`uci get dockerd.dockerman.remote_endp
 uci del_list dockerd.dockerman.ac_allowed_interface='br-lan'
 uci add_list dockerd.dockerman.ac_allowed_interface='br-lan'
 uci commit dockerd
+endef
+
+include $(TOPDIR)/feeds/luci/luci.mk
+
+# call BuildPackage - OpenWrt buildroot signature
