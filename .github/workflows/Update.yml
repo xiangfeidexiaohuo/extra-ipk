@@ -50,7 +50,7 @@ jobs:
         rm -rf ./op-mosdns
         rm -rf ./op-alist/*
         rm -rf ./op-ddnsgo/*
-        rm -rf ./op-lucky/*
+        # rm -rf ./op-lucky/*
         rm -rf ./op-xunlei/*
         rm -rf ./patch/wall
         rm -rf ./patch/wall-luci/luci-app-passwall
@@ -143,9 +143,9 @@ jobs:
  
        
         git clone https://github.com/sirpdboy/luci-app-ddns-go ./op-ddnsgo/
-        git clone https://github.com/sirpdboy/luci-app-lucky ./op-lucky/
-        rm -rf ./op-lucky/README.md
-        rm -rf ./op-ddnsgo/README.md
+        # git clone https://github.com/sirpdboy/luci-app-lucky ./op-lucky/
+        # rm -rf ./op-lucky/README.md
+        # rm -rf ./op-ddnsgo/README.md
 
        
         git clone https://github.com/pymumu/luci-app-smartdns -b lede ./op-smartdns/luci-app-smartdns
