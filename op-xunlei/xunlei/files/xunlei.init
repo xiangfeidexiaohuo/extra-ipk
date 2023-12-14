@@ -9,7 +9,6 @@ get_config() {
 	config_get_bool debug $1 debug 0
 	config_get host $1 host "0.0.0.0"
 	config_get port $1 port 5051
-	config_get auth_user $1 auth_user ''
 	config_get auth_password $1 auth_password ''
 	config_get config_path $1 config_path "/opt/xunlei"
 	config_get download_path $1 download_path "/opt/xunlei/downloads"
@@ -63,8 +62,8 @@ start_service() {
 	
 	args="--host $host --port $port --config-path $config_path --download-path $download_path --mount-bind-download-path $mount_bind_download_path"
 
-	if [ -n "$auth_user" ] && [ -n "$auth_password" ]; then
-		args="$args --auth-user $auth_user --auth-password $auth_password"
+	if [ -n "$auth_password" ]; then
+		args="$args --auth-password $auth_password"
 	fi
 
 	if [ $debug -ne 0 ]; then 
