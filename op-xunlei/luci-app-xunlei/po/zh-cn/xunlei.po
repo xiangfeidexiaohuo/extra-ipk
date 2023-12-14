@@ -31,9 +31,6 @@ msgstr "监听主机"
 msgid "Port"
 msgstr "监听端口"
 
-msgid "Username"
-msgstr "用户名"
-
 msgid "Password"
 msgstr "密码"
 

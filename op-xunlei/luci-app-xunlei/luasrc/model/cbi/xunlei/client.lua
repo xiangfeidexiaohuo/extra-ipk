@@ -24,7 +24,6 @@ o.datatype = "and(port,min(1025))"
 o.default = "5055"
 o.rmempty = false
 
-o = s:option(Value, "auth_user", translate("Username"))
 o = s:option(Value, "auth_password", translate("Password"))
 o.password = true
 

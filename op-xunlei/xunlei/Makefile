@@ -7,7 +7,7 @@ PKG_VERSION:=3.11.2-32
 PKG_LICENSE:=MIT
 PKG_MAINTAINER:=gngpp <gngppz@gmail.com>
 
-PKG_SOURCE:=xunlei-launcher-$(PKG_VERSION)-$(ARCH)-unknown-linux-musl.tar.gz
+PKG_SOURCE:=xunlei-$(PKG_VERSION)-$(ARCH)-unknown-linux-musl.tar.gz
 PKG_SOURCE_URL:=https://github.com/gngpp/xunlei/releases/download/v$(PKG_VERSION)/
 PKG_HASH:=skip
 STRIP:=false
@@ -42,7 +42,7 @@ define Build/Prepare
 	rm $(PKG_SOURCE).sha256 $(PKG_SOURCE)
 
 	tar -xvf $(DL_DIR)/$(PKG_SOURCE)
-	mv xunlei-launcher-$(PKG_VERSION)-$(ARCH)-unknown-linux-musl/* $(PKG_BUILD_DIR)/
+	mv xunlei-$(PKG_VERSION)-$(ARCH)-unknown-linux-musl/* $(PKG_BUILD_DIR)/
 endef
 
 define Build/Compile
