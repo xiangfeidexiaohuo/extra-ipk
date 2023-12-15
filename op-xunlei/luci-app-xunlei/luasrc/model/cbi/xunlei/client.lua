@@ -15,14 +15,8 @@ o.rmempty = false
 o = s:option(Flag, "debug", translate("Debug"))
 o.rmempty = false
 
-o = s:option(Value, "host", translate("Host"))
-o.default = "0.0.0.0"
-o.datatype = "ipaddr"
-
-o = s:option(Value, "port", translate("Port"))
-o.datatype = "and(port,min(1025))"
-o.default = "5055"
-o.rmempty = false
+o = s:option(Value, "bind", translate("Bind"))
+o.default = "0.0.0.0:5055"
 
 o = s:option(Value, "auth_password", translate("Password"))
 o.password = true

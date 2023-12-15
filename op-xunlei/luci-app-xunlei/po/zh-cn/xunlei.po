@@ -25,11 +25,8 @@ msgstr "收集数据..."
 msgid "Open Web Interface"
 msgstr "打开 Web 界面"
 
-msgid "Host"
+msgid "Bind"
 msgstr "监听主机"
-
-msgid "Port"
-msgstr "监听端口"
 
 msgid "Password"
 msgstr "密码"

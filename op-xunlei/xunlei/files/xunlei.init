@@ -7,8 +7,7 @@ PROG=/usr/bin/xunlei
 get_config() {
 	config_get_bool enabled $1 enabled 0
 	config_get_bool debug $1 debug 0
-	config_get host $1 host "0.0.0.0"
-	config_get port $1 port 5051
+	config_get bind $1 bind "0.0.0.0:5055"
 	config_get auth_password $1 auth_password ''
 	config_get config_path $1 config_path "/opt/xunlei"
 	config_get download_path $1 download_path "/opt/xunlei/downloads"
@@ -60,7 +59,7 @@ start_service() {
 		mkdir -p $mount_bind_download_path
 	fi
 	
-	args="--host $host --port $port --config-path $config_path --download-path $download_path --mount-bind-download-path $mount_bind_download_path"
+	args="--bind $bind --config-path $config_path --download-path $download_path --mount-bind-download-path $mount_bind_download_path"
 
 	if [ -n "$auth_password" ]; then
 		args="$args --auth-password $auth_password"
