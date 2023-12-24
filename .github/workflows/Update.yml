@@ -161,8 +161,8 @@ jobs:
 
         svn export https://github.com/unifreq/luci-app-oled/trunk/luci-app-oled ./luci-app-oled
         
-        svn export https://github.com/gngpp/xunlei/trunk/openwrt/luci-app-xunlei ./op-xunlei/luci-app-xunlei
-        svn export https://github.com/gngpp/xunlei/trunk/openwrt/xunlei ./op-xunlei/xunlei
+        svn export https://github.com/gngpp/xunlei/trunk/openwrt/luci-app-thunder ./op-xunlei/luci-app-thunder
+        svn export https://github.com/gngpp/xunlei/trunk/openwrt/thunder ./op-xunlei/thunder
         
     - name: Apply
       run: |
