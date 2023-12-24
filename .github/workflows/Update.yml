@@ -157,8 +157,11 @@ jobs:
         rm -rf ./theme/luci-theme-argon/.github
         rm -rf ./theme/luci-theme-argon/.gitignore
         rm -rf ./theme/luci-theme-argon-18.06/.github
-        rm -rf ./theme/luci-theme-argon-18.06/.gitignore
-
+        rm -rf ./theme/luci-theme-argon-18.06/.gitignore       
+        rm -rf ./theme/luci-theme-argon/README*
+        rm -rf ./theme/luci-theme-argon/RELEASE*
+        rm -rf ./theme/luci-theme-argon-18.06/README*
+      
         svn export https://github.com/unifreq/luci-app-oled/trunk/luci-app-oled ./luci-app-oled
         
         svn export https://github.com/gngpp/xunlei/trunk/openwrt/luci-app-thunder ./op-xunlei/luci-app-thunder
