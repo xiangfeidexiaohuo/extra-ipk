@@ -118,10 +118,9 @@ jobs:
         rm -rf ./patch/wall-luci/pass
         rm -rf ./patch/wall-luci/pass2
 
-        cd ./patch/wall-luci/
         git clone --depth=1 https://github.com/vernesong/OpenClash.git -b dev
-        mv ./patch/wall-luci/OpenClash/luci-app-openclash ./patch/wall-luci/
-        rm -rf ./patch/wall-luci/OpenClash
+        mv ./OpenClash/luci-app-openclash ./patch/wall-luci/
+        rm -rf ./OpenClash
 
         git clone https://github.com/sbwml/luci-app-mosdns ./op-mosdns
         git clone https://github.com/sbwml/v2ray-geodata ./op-mosdns/v2ray-geodata
