@@ -109,8 +109,14 @@ jobs:
         mv ./patch/wall/helloworld/lua-neturl ./patch/wall/
         mv ./patch/wall/helloworld/shadow-tls ./patch/wall/
         mv ./patch/wall/helloworld/luci-app-ssr-plus ./patch/wall-luci/
-        rm -rf ./patch/wall/helloworld
         
+        rm -rf ./patch/wall/gn
+        rm -rf ./patch/wall/naiveproxy
+        mv ./patch/wall/helloworld/gn ./patch/wall/
+        mv ./patch/wall/helloworld/naiveproxy ./patch/wall/
+        
+        rm -rf ./patch/wall/helloworld
+    
         git clone https://github.com/xiaorouji/openwrt-passwall ./patch/wall-luci/pass
         git clone https://github.com/xiaorouji/openwrt-passwall2 ./patch/wall-luci/pass2
         mv ./patch/wall-luci/pass/luci-app-passwall ./patch/wall-luci/
