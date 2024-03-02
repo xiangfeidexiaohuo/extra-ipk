@@ -6,7 +6,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-thunder
-PKG_VERSION:=1.0.1-9
+PKG_VERSION:=1.0.2-9
 
 PKG_MAINTAINER:=gngpp <gngppz@gmail.com>
 
