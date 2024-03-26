@@ -103,6 +103,7 @@ jobs:
         
         git clone https://github.com/xiaorouji/openwrt-passwall-packages ./patch/wall
         rm -rf ./patch/wall/.github
+        rm -rf ./patch/wall/chinadns-ng
         
         git clone https://github.com/fw876/helloworld ./patch/wall/helloworld
         mv ./patch/wall/helloworld/redsocks2 ./patch/wall/
