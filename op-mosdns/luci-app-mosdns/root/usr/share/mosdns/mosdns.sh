@@ -39,7 +39,7 @@ get_adlist() (
             if [ $(echo $url) = 'geosite.dat' ]; then
                 echo "/var/mosdns/geosite_category-ads-all.txt"
             elif echo "$url" | grep -Eq "^file://" ; then
-                echo "$(echo "$url" | sed 's/file:\/\///')"
+                echo "$url" | sed 's/file:\/\///'
             else
                 echo "/etc/mosdns/rule/adlist/$(basename $url)"
                 [ ! -f "/etc/mosdns/rule/adlist/$(basename $url)" ] && touch /etc/mosdns/rule/adlist/$(basename $url)
