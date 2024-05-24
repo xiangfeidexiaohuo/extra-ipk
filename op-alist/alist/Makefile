@@ -74,7 +74,7 @@ define Build/Prepare
 	$(call Build/Prepare/Default)
 	$(eval $(call Download,$(PKG_NAME)-web))
 	$(TAR) --strip-components=1 -C $(PKG_BUILD_DIR)/public/dist -xzf $(DL_DIR)/$(PKG_NAME)-web-$(PKG_WEB_VERSION).tar.gz
-ifeq ($(ARCH),arm),$(ARCH),i386),$(ARCH),mips),$(ARCH),mipsel)
+ifneq ($(CONFIG_ARCH_64BIT),y)
 	$(RM) -rf $(PKG_BUILD_DIR)/{drivers/lark.go,drivers/lark}
 endif
 endef
