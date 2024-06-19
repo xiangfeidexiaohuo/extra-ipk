@@ -8,13 +8,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mbedtls
-PKG_VERSION:=2.28.5
+PKG_VERSION:=2.28.8
 PKG_RELEASE:=1
-PKG_USE_MIPS16:=0
+PKG_BUILD_FLAGS:=no-mips16 gc-sections no-lto
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/ARMmbed/mbedtls/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=849e86b626e42ded6bf67197b64aa771daa54e2a7e2868dc67e1e4711959e5e3
+PKG_HASH:=4fef7de0d8d542510d726d643350acb3cdb9dc76ad45611b59c9aa08372b4213
 
 PKG_LICENSE:=GPL-2.0-or-later
 PKG_LICENSE_FILES:=gpl-2.0.txt
@@ -70,6 +70,8 @@ MBEDTLS_BUILD_OPTS= \
   CONFIG_MBEDTLS_SELF_TEST \
   CONFIG_MBEDTLS_SSL_RENEGOTIATION \
   CONFIG_MBEDTLS_SSL_TRUNCATED_HMAC \
+  CONFIG_MBEDTLS_THREADING_C \
+  CONFIG_MBEDTLS_THREADING_PTHREAD \
   CONFIG_MBEDTLS_VERSION_C \
   CONFIG_MBEDTLS_VERSION_FEATURES
 
@@ -94,7 +96,7 @@ $(call Package/mbedtls/Default)
   CATEGORY:=Libraries
   SUBMENU:=SSL
   TITLE+= (library)
-  ABI_VERSION:=12
+  ABI_VERSION:=13
   MENU:=1
 endef
 
@@ -121,7 +123,6 @@ This package contains mbedtls helper programs for private key and
 CSR generation (gen_key, cert_req)
 endef
 
-TARGET_CFLAGS += -ffunction-sections -fdata-sections
 TARGET_CFLAGS := $(filter-out -O%,$(TARGET_CFLAGS))
 
 CMAKE_OPTIONS += \
@@ -142,7 +143,10 @@ endef
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/include
-	$(CP) $(PKG_INSTALL_DIR)/usr/include/mbedtls $(1)/usr/include/
+	$(CP) \
+		$(PKG_INSTALL_DIR)/usr/include/mbedtls \
+		$(PKG_INSTALL_DIR)/usr/include/psa \
+		$(1)/usr/include/
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/lib*.so* $(1)/usr/lib/
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/lib*.a $(1)/usr/lib/
