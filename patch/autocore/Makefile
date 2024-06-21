@@ -52,6 +52,7 @@ define Package/autocore-arm/install
 	$(INSTALL_BIN) ./files/generic/cpuinfo $(1)/sbin/
 	$(INSTALL_BIN) ./files/generic/ethinfo $(1)/sbin/
 	$(INSTALL_BIN) ./files/arm/tempinfo $(1)/sbin/
+	$(INSTALL_BIN) ./files/arm/usage $(1)/sbin/usage
 endef
 
 define Package/autocore-x86/install
