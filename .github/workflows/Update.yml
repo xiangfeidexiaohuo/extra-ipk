@@ -169,7 +169,7 @@ jobs:
         mv ./oled/luci-app-oled ./
         rm -rf ./oled
       
-        git clone https://github.com/gngpp/thunder ./op-xunlei/xunlei
+        git clone https://github.com/0x676e67/thunder ./op-xunlei/xunlei
         mv ./op-xunlei/xunlei/openwrt/* ./op-xunlei/
         rm -rf ./op-xunlei/xunlei
 
