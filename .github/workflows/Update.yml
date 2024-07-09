@@ -46,7 +46,7 @@ jobs:
         rm -rf ./op-alist/*
         rm -rf ./op-ddnsgo/*
         rm -rf ./op-lucky/*
-        rm -rf ./op-xunlei/*
+        # rm -rf ./op-xunlei/*
         rm -rf ./patch/wall/*
         rm -rf ./patch/wall-luci/luci-app-passwall
         rm -rf ./patch/wall-luci/luci-app-passwall2
@@ -169,9 +169,9 @@ jobs:
         mv ./oled/luci-app-oled ./
         rm -rf ./oled
       
-        git clone https://github.com/0x676e67/thunder ./op-xunlei/xunlei
-        mv ./op-xunlei/xunlei/openwrt/* ./op-xunlei/
-        rm -rf ./op-xunlei/xunlei
+        # git clone https://github.com/0x676e67/thunder ./op-xunlei/xunlei
+        # mv ./op-xunlei/xunlei/openwrt/* ./op-xunlei/
+        # rm -rf ./op-xunlei/xunlei
 
         
     - name: Apply
