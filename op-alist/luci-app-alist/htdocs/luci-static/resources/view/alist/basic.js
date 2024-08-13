@@ -17,18 +17,18 @@ function getServiceStatus() {
 	return L.resolveDefault(callServiceList('alist'), {}).then(function (res) {
 		var isRunning = false;
 		try {
-			isRunning = res['alist']['instances']['instance1']['running'];
+			isRunning = res['alist']['instances']['alist']['running'];
 		} catch (e) { }
 		return isRunning;
 	});
 }
 
-function renderStatus(isRunning, webport) {
+function renderStatus(isRunning, protocol, webport) {
 	var spanTemp = '<em><span style="color:%s"><strong>%s %s</strong></span></em>';
 	var renderHTML;
 	if (isRunning) {
-		var button = String.format('<input class="cbi-button-reload" type="button" style="margin-left: 50px" value="%s" onclick="window.open(\'//%s:%s/\')">',
-			_('Open Web Interface'), window.location.hostname, webport);
+		var button = String.format('<input class="cbi-button-reload" type="button" style="margin-left: 50px" value="%s" onclick="window.open(\'%s//%s:%s/\')">',
+			_('Open Web Interface'), protocol, window.location.hostname, webport);
 		renderHTML = spanTemp.format('green', 'Alist', _('RUNNING')) + button;
 	} else {
 		renderHTML = spanTemp.format('red', 'Alist', _('NOT RUNNING'));
@@ -64,6 +64,13 @@ return view.extend({
 	render: function (data) {
 		var m, s, o;
 		var webport = uci.get(data[0], '@alist[0]', 'port') || '5244';
+		var ssl = uci.get(data[0], '@alist[0]', 'ssl') || '0';
+		var protocol;
+		if (ssl === '0') {
+			protocol = 'http:';
+		} else if (ssl === '1') {
+			protocol = 'https:';
+		}
 
 		m = new form.Map('alist', _('Alist'),
 			_('A file list program that supports multiple storage.') +
@@ -79,7 +86,7 @@ return view.extend({
 			poll.add(function () {
 				return L.resolveDefault(getServiceStatus()).then(function (res) {
 					var view = document.getElementById('service_status');
-					view.innerHTML = renderStatus(res, webport);
+					view.innerHTML = renderStatus(res, protocol, webport);
 				});
 			});
 
@@ -95,6 +102,7 @@ return view.extend({
 		o.rmempty = false;
 
 		o = s.option(form.Value, 'port', _('Port'));
+		o.datatype = 'and(port,min(1))';
 		o.default = '5244';
 		o.rmempty = false;
 
@@ -107,10 +115,12 @@ return view.extend({
 
 		o = s.option(form.Value, 'ssl_cert', _('SSL cert'),
 			_('SSL certificate file path'));
+		o.rmempty = false;
 		o.depends('ssl', '1');
 
 		o = s.option(form.Value, 'ssl_key', _('SSL key'),
 			_('SSL key file path'));
+		o.rmempty = false;
 		o.depends('ssl', '1');
 
 		o = s.option(form.Flag, 'mysql', _('Enable Database'));
@@ -126,6 +136,7 @@ return view.extend({
 		o.depends('mysql', '1');
 
 		o = s.option(form.Value, 'mysql_port', _('Database Port'));
+		o.datatype = 'port';
 		o.default = '3306';
 		o.depends('mysql', '1');
 
@@ -157,13 +168,16 @@ return view.extend({
 		o = s.option(form.Value, 'max_connections', _('Max Connections'),
 			_('0 is unlimited, It is recommend to set a low number of concurrency (10-20) for poor performance device'));
 		o.default = '0';
+		o.datatype = 'uinteger';
 		o.rmempty = false;
 
 		o = s.option(form.Value, 'token_expires_in', _('Login Validity Period (hours)'));
+		o.datatype = 'uinteger';
 		o.default = '48';
 		o.rmempty = false;
 
 		o = s.option(form.Value, 'delayed_start', _('Delayed Start (seconds)'));
+		o.datatype = 'uinteger';
 		o.default = '0';
 		o.rmempty = false;
 
