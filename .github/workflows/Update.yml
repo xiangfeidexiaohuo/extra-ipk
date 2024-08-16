@@ -42,7 +42,9 @@ jobs:
         rm -rf ./luci-app-unblockneteasemusic
         rm -rf ./linkease/*   
         rm -rf ./op-oaf
-        rm -rf ./op-mosdns
+        rm -rf ./op-mosdns/v2dat
+        rm -rf ./op-mosdns/mosdns
+        rm -rf ./op-mosdns/v2ray-geodata
         rm -rf ./op-alist/*
         rm -rf ./op-ddnsgo/*
         rm -rf ./op-lucky/*
@@ -129,11 +131,13 @@ jobs:
         mv ./OpenClash/luci-app-openclash ./patch/wall-luci/
         rm -rf ./OpenClash
 
-        git clone https://github.com/sbwml/luci-app-mosdns ./op-mosdns
+        git clone https://github.com/sbwml/luci-app-mosdns ./op-mosdns/tmp
+        mv ./op-mosdns/tmp/mosdns ./op-mosdns/
+        mv ./op-mosdns/tmp/v2dat ./op-mosdns/
+        rm -rf ./op-mosdns/tmp
+        
         git clone https://github.com/sbwml/v2ray-geodata ./op-mosdns/v2ray-geodata
-        rm -rf ./op-mosdns/install.sh
-        rm -rf ./op-mosdns/.github
-        rm -rf ./op-mosdns/README.md
+        
         git clone https://github.com/sbwml/openwrt-alist ./op-alist/
         rm -rf ./op-alist/.github
         rm -rf ./op-alist/README.md
