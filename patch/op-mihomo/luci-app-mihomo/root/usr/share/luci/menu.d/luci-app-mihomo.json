@@ -1,6 +1,6 @@
 {
     "admin/services/mihomo": {
-        "title": "Mihomo",
+        "title": "Mihomo for OpenWrt",
         "action": {
             "type": "alias",
             "path": "admin/services/mihomo/config"
