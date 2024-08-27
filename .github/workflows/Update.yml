@@ -141,6 +141,7 @@ jobs:
         
         git clone https://github.com/immortalwrt/homeproxy ./patch/wall-luci/luci-app-homeproxy
         rm -rf ./patch/wall-luci/luci-app-homeproxy/.github
+        rm -rf ./patch/wall-luci/luci-app-homeproxy/.git
         
      
         git clone https://github.com/sbwml/luci-app-mosdns ./op-mosdns/tmp
