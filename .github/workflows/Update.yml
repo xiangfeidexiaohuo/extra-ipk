@@ -48,7 +48,9 @@ jobs:
         rm -rf ./op-alist/*
         rm -rf ./op-ddnsgo/*
         rm -rf ./op-lucky/*
-        rm -rf ./patch/op-mihomo/*
+        rm -rf ./patch/wall-luci/luci-app-mihomo
+        rm -rf ./patch/wall-luci/mihomo
+        rm -rf ./patch/wall-luci/luci-app-homeproxy
         # rm -rf ./op-xunlei/*
         rm -rf ./patch/wall/*
         rm -rf ./patch/wall-luci/luci-app-passwall
@@ -132,10 +134,14 @@ jobs:
         mv ./OpenClash/luci-app-openclash ./patch/wall-luci/
         rm -rf ./OpenClash
 
-        git clone https://github.com/morytyann/OpenWrt-mihomo ./patch/op-mihomo/tmp
-        mv ./patch/op-mihomo/tmp/luci-app-mihomo ./patch/op-mihomo/
-        mv ./patch/op-mihomo/tmp/mihomo ./patch/op-mihomo/
-        rm -rf ./patch/op-mihomo/tmp
+        git clone https://github.com/morytyann/OpenWrt-mihomo ./patch/wall-luci/tmp
+        mv ./patch/wall-luci/tmp/luci-app-mihomo ./patch/wall-luci/
+        mv ./patch/wall-luci/tmp/mihomo ./patch/wall-luci/
+        rm -rf ./patch/wall-luci/tmp
+        
+        git clone https://github.com/immortalwrt/homeproxy ./patch/wall-luci/luci-app-homeproxy
+        rm -rf ./patch/wall-luci/luci-app-homeproxy/.github
+        
      
         git clone https://github.com/sbwml/luci-app-mosdns ./op-mosdns/tmp
         mv ./op-mosdns/tmp/mosdns ./op-mosdns/
