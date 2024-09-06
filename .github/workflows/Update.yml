@@ -117,9 +117,9 @@ jobs:
         mv ./patch/wall/helloworld/luci-app-ssr-plus ./patch/wall-luci/
         
         rm -rf ./patch/wall/gn
-        rm -rf ./patch/wall/naiveproxy
+        # rm -rf ./patch/wall/naiveproxy
         mv ./patch/wall/helloworld/gn ./patch/wall/
-        mv ./patch/wall/helloworld/naiveproxy ./patch/wall/
+        # mv ./patch/wall/helloworld/naiveproxy ./patch/wall/
         
         rm -rf ./patch/wall/helloworld
     
