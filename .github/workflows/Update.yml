@@ -151,7 +151,7 @@ jobs:
         
         git clone https://github.com/sbwml/v2ray-geodata ./op-mosdns/v2ray-geodata
         
-        git clone https://github.com/sbwml/openwrt-alist ./op-alist/
+        git clone https://github.com/sbwml/openwrt-alist -b lua ./op-alist/
         rm -rf ./op-alist/.github
         rm -rf ./op-alist/README.md
         rm -rf ./op-alist/install.sh
