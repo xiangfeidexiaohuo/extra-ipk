@@ -155,7 +155,7 @@ jobs:
         rm -rf ./op-alist/.github
         rm -rf ./op-alist/README.md
         rm -rf ./op-alist/install.sh
-        git clone https://github.com/UnblockNeteaseMusic/luci-app-unblockneteasemusic ./luci-app-unblockneteasemusic/
+        git clone https://github.com/UnblockNeteaseMusic/luci-app-unblockneteasemusic -b master ./luci-app-unblockneteasemusic/
         rm -rf ./luci-app-unblockneteasemusic/.github
         rm -rf ./luci-app-unblockneteasemusic/README.md
  
