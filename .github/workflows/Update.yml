@@ -69,6 +69,7 @@ jobs:
         git clone https://github.com/tty228/luci-app-wechatpush ./luci-app-wechatpush
         rm -rf ./luci-app-wechatpush/README.md
         rm -rf ./luci-app-wechatpush/README_en.md
+        rm -rf ./luci-app-wechatpush/.github
         # git clone https://github.com/stevenke1981/luci-app-easymesh ./luci-app-easymesh
         # rm -rf ./luci-app-easymesh/README.md
         git clone https://github.com/ilxp/luci-app-ikoolproxy ./luci-app-ikoolproxy
