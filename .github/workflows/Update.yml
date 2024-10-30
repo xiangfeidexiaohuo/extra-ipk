@@ -42,9 +42,7 @@ jobs:
         rm -rf ./luci-app-unblockneteasemusic
         rm -rf ./linkease/*   
         rm -rf ./op-oaf
-        rm -rf ./op-mosdns/v2dat
-        rm -rf ./op-mosdns/mosdns
-        rm -rf ./op-mosdns/v2ray-geodata
+        rm -rf ./op-mosdns/*
         rm -rf ./op-alist/*
         rm -rf ./op-ddnsgo/*
         rm -rf ./op-lucky/*
@@ -145,28 +143,33 @@ jobs:
         rm -rf ./patch/wall-luci/luci-app-homeproxy/.git
         
      
-        git clone https://github.com/sbwml/luci-app-mosdns ./op-mosdns/tmp
+        git clone https://github.com/sbwml/luci-app-mosdns -b v5-lua ./op-mosdns/tmp
+        mv ./op-mosdns/tmp/luci-app-mosdns ./op-mosdns/
         mv ./op-mosdns/tmp/mosdns ./op-mosdns/
         mv ./op-mosdns/tmp/v2dat ./op-mosdns/
-        rm -rf ./op-mosdns/tmp
-        
+        rm -rf ./op-mosdns/tmp     
         git clone https://github.com/sbwml/v2ray-geodata ./op-mosdns/v2ray-geodata
         
-        git clone https://github.com/sbwml/openwrt-alist -b lua ./op-alist/
-        rm -rf ./op-alist/.github
-        rm -rf ./op-alist/README.md
-        rm -rf ./op-alist/install.sh
+        
+        git clone https://github.com/sbwml/openwrt-alist -b lua ./op-alist/tmp
+        mv ./op-alist/tmp/luci-app-alist ./op-alist/
+        mv ./op-alist/tmp/alist ./op-alist/
+        rm -rf ./op-alist/tmp 
+        
         git clone https://github.com/UnblockNeteaseMusic/luci-app-unblockneteasemusic -b master ./luci-app-unblockneteasemusic/
         rm -rf ./luci-app-unblockneteasemusic/.github
         rm -rf ./luci-app-unblockneteasemusic/README.md
- 
+
+
+        git clone https://github.com/gdy666/luci-app-lucky ./op-lucky/tmp
+        mv ./op-lucky/tmp/luci-app-lucky ./op-lucky/
+        mv ./op-lucky/tmp/lucky ./op-lucky/
+        rm -rf ./op-lucky/tmp 
        
         git clone https://github.com/sirpdboy/luci-app-ddns-go ./op-ddnsgo/
-        git clone https://github.com/sirpdboy/luci-app-lucky ./op-lucky/
-        rm -rf ./op-lucky/README.md
         rm -rf ./op-ddnsgo/README.md
         rm -rf ./op-ddnsgo/.github
-        rm -rf ./op-lucky/.github
+
 
        
         git clone https://github.com/pymumu/luci-app-smartdns -b lede ./op-smartdns/luci-app-smartdns
