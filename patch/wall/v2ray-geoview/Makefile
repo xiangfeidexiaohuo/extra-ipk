@@ -43,16 +43,11 @@ define geoview/templates
 
   define Package/$(1)/install
 	$$(call GoPackage/Package/Install/Bin,$$(PKG_INSTALL_DIR))
-
 	$$(INSTALL_DIR) $$(1)/usr/bin
 	$$(INSTALL_BIN) $$(PKG_INSTALL_DIR)/usr/bin/$(1) $$(1)/usr/bin/
   endef
 endef
 
-GEOVIEW_COMPONENTS:=geoview
-
-$(foreach component,$(GEOVIEW_COMPONENTS), \
-  $(eval $(call geoview/templates,$(component))) \
-  $(eval $(call GoBinPackage,$(component))) \
-  $(eval $(call BuildPackage,$(component))) \
-)
+$(eval $(call geoview/templates,geoview))
+$(eval $(call GoBinPackage,geoview))
+$(eval $(call BuildPackage,geoview))
