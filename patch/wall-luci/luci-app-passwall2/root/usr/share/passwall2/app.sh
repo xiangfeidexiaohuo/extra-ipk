@@ -978,7 +978,7 @@ run_ipset_chinadns_ng() {
 		vps_set_names="passwall2_vpslist,passwall2_vpslist6"
 	}
 	[ -n "${nftset}" ] && {
-		set_names=$(echo $direct_nftset | awk -F, '{printf "%s,%s", substr($1,3), substr($2,3)}' | sed 's/#/@/g')
+		set_names=$(echo ${nftset} | awk -F, '{printf "%s,%s", substr($1,3), substr($2,3)}' | sed 's/#/@/g')
 		vps_set_names="inet@passwall2@passwall2_vpslist,inet@passwall2@passwall2_vpslist6"
 	}
 	cat <<-EOF > $config_file
