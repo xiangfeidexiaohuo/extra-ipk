@@ -25,24 +25,29 @@ GO_PKG_LDFLAGS:=-s -w
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
-define Package/geoview
-  TITLE:=A geofile toolkit
-  URL:=https://github.com/snowie2000/geoview
-  SECTION:=net
-  CATEGORY:=Network
-  SUBMENU:=IP Addresses and Names
-  DEPENDS:=$(GO_ARCH_DEPENDS)
-endef
+define geoview/templates
+  define Package/$(1)
+    TITLE:=A geofile toolkit ($(1))
+    URL:=https://github.com/snowie2000/geoview
+    SECTION:=net
+    CATEGORY:=Network
+    SUBMENU:=Web Servers/Proxies
+    DEPENDS+= $$(GO_ARCH_DEPENDS)
+  endef
 
-define Package/geoview/description
+  define Package/$(1)/description
   geoview is a handy tool to extract useful information from geo* files.
+
+  This package contains the $(1).
+  endef
+
+  define Package/$(1)/install
+	$$(call GoPackage/Package/Install/Bin,$$(PKG_INSTALL_DIR))
+	$$(INSTALL_DIR) $$(1)/usr/bin
+	$$(INSTALL_BIN) $$(PKG_INSTALL_DIR)/usr/bin/$(1) $$(1)/usr/bin/
+  endef
 endef
 
-define Package/geoview/install
-	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
-	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/$(1) $(1)/usr/bin/
-endef
-
+$(eval $(call geoview/templates,geoview))
 $(eval $(call GoBinPackage,geoview))
 $(eval $(call BuildPackage,geoview))
