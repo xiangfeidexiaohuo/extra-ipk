@@ -108,6 +108,28 @@ begin
                      end;
                   end;
                end;
+               if not i['path'] and i['type'] == 'inline' and i['payload'] and not i['payload'].empty? then
+                  Value['payload'].each do
+                     |k|
+                     threadsp << Thread.new {
+                        if k['server'] then
+                           if servers.include?(k['server']) then
+                              next;
+                           end; 
+                           if k['server'] =~ reg then
+                              servers = servers.push(k['server']).uniq
+                              syscall = '/usr/share/openclash/openclash_debug_dns.lua 2>/dev/null \"' + k['server'] + '\" \"true\"'
+                              result = IO.popen(syscall).read.split(/\n+/)
+                              if result then
+                                 ips = ips | result
+                              end;
+                           else
+                              ips = ips.push(k['server']).uniq
+                           end;
+                        end;
+                     };
+                  end;
+               end;
                threadsp.each(&:join);
             };
          end;
@@ -143,12 +165,6 @@ rescue Exception => e
 end" 2>/dev/null >> $LOG_FILE
 }
 
-#wait for core start complete
-while ( [ -n "$(unify_ps_pids "/etc/init.d/openclash")" ] )
-do
-   sleep 1
-done >/dev/null 2>&1
-
 while :;
 do
    cfg_update=$(uci -q get openclash.config.auto_update)
@@ -169,6 +185,12 @@ do
    stream_auto_select_google_not_cn=$(uci -q get openclash.config.stream_auto_select_google_not_cn || echo 0)
    stream_auto_select_openai=$(uci -q get openclash.config.stream_auto_select_openai || echo 0)
    upnp_lease_file=$(uci -q get upnpd.config.upnp_lease_file)
+
+#wait for core start complete
+while ( [ -n "$(unify_ps_pids "/etc/init.d/openclash")" ] )
+do
+   sleep 1
+done >/dev/null 2>&1
 
 ## Porxy history
    /usr/share/openclash/openclash_history_get.sh

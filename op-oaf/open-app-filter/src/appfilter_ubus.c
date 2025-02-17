@@ -820,6 +820,92 @@ static int handle_set_app_filter_base(struct ubus_context *ctx, struct ubus_obje
 }
 
 
+static int handle_get_app_filter_adv(struct ubus_context *ctx, struct ubus_object *obj,
+                                 struct ubus_request_data *req, const char *method,
+                                 struct blob_attr *msg) {
+    struct json_object *response = json_object_new_object();
+    struct json_object *data_obj = json_object_new_object();
+
+    int i;
+    struct uci_context *uci_ctx = uci_alloc_context();
+    if (!uci_ctx) {
+        printf("Failed to allocate UCI context\n");
+        return 0;
+    }
+    char lan_ifname[16];
+
+    int tcp_rst = af_uci_get_int_value(uci_ctx, "appfilter.global.tcp_rst");
+    af_uci_get_value(uci_ctx, "appfilter.global.lan_ifname", lan_ifname, sizeof(lan_ifname));
+    int disable_hnat = af_uci_get_int_value(uci_ctx, "appfilter.global.disable_hnat");
+    int auto_load_engine = af_uci_get_int_value(uci_ctx, "appfilter.global.auto_load_engine");
+
+    json_object_object_add(data_obj, "tcp_rst", json_object_new_int(tcp_rst));
+    json_object_object_add(data_obj, "lan_ifname", json_object_new_string(lan_ifname));
+    json_object_object_add(data_obj, "disable_hnat", json_object_new_int(disable_hnat));
+    json_object_object_add(data_obj, "auto_load_engine", json_object_new_int(auto_load_engine));
+
+    json_object_object_add(response, "data", data_obj);
+    uci_free_context(uci_ctx);
+    struct blob_buf b = {};
+    blob_buf_init(&b, 0);
+    blobmsg_add_object(&b, response);
+    ubus_send_reply(ctx, req, b.head);
+    blob_buf_free(&b);
+    json_object_put(response);
+    return 0;
+}
+static int handle_set_app_filter_adv(struct ubus_context *ctx, struct ubus_object *obj,
+                                 struct ubus_request_data *req, const char *method,
+                                 struct blob_attr *msg) {
+    struct json_object *response = json_object_new_object();
+    int i;
+    char *msg_obj_str = blobmsg_format_json(msg, true);
+    if (!msg_obj_str) {
+        printf("format json failed\n");
+        return 0;
+    }
+    printf("msg_obj_str: %s\n", msg_obj_str);
+    struct json_object *req_obj = json_tokener_parse(msg_obj_str);
+    struct json_object *tcp_rst_obj = json_object_object_get(req_obj, "tcp_rst");
+    struct json_object *lan_ifname_obj = json_object_object_get(req_obj, "lan_ifname");
+    struct json_object *disable_hnat_obj = json_object_object_get(req_obj, "disable_hnat");
+    struct json_object *auto_load_engine_obj = json_object_object_get(req_obj, "auto_load_engine");
+
+    struct uci_context *uci_ctx = uci_alloc_context();
+    if (!uci_ctx) {
+        printf("Failed to allocate UCI context\n");
+        return 0;
+    }
+
+    if (tcp_rst_obj)
+        af_uci_set_int_value(uci_ctx, "appfilter.global.tcp_rst", json_object_get_int(tcp_rst_obj));
+    if (lan_ifname_obj)
+        af_uci_set_value(uci_ctx, "appfilter.global.lan_ifname", json_object_get_string(lan_ifname_obj));
+    if (disable_hnat_obj)
+        af_uci_set_int_value(uci_ctx, "appfilter.global.disable_hnat", json_object_get_int(disable_hnat_obj));
+    if (auto_load_engine_obj){
+        af_uci_set_int_value(uci_ctx, "appfilter.global.auto_load_engine", json_object_get_int(auto_load_engine_obj));
+        if (json_object_get_int(auto_load_engine_obj) == 0){
+            system("rm /etc/modules.d/oaf");
+        }
+    }
+
+
+    af_uci_commit(uci_ctx, "appfilter");
+    g_oaf_config_change = 1;
+    reload_oaf_rule();
+    system("/usr/bin/hnat.sh &");
+    uci_free_context(uci_ctx);
+    struct blob_buf b = {};
+    blob_buf_init(&b, 0);
+    blobmsg_add_object(&b, response);
+    ubus_send_reply(ctx, req, b.head);
+    blob_buf_free(&b);
+    json_object_put(response);
+    return 0;
+}
+
+
 static int handle_get_app_filter_time(struct ubus_context *ctx, struct ubus_object *obj,
                                  struct ubus_request_data *req, const char *method,
                                  struct blob_attr *msg) {
@@ -1418,12 +1504,31 @@ static int handle_get_oaf_status(struct ubus_context *ctx, struct ubus_object *o
     struct json_object *response = json_object_new_object();
     struct json_object *data_obj = json_object_new_object();
     char result[128] = {0};
+    char kernel_version[128] = {0};
     int enable = 0;
+    int ret = 0;
+    int engine_status = 0;
     
-    exec_with_result_line("cat /proc/sys/oaf/enable", result, sizeof(result));
-    enable = atoi(result);
+    ret = exec_with_result_line("cat /proc/sys/oaf/enable", result, sizeof(result));
+    if (strlen(result) == 0){
+        engine_status = 0;
+        enable = 0;
+    }
+    else{
+        enable = atoi(result);
+        engine_status = 1;
+    }
  
     json_object_object_add(data_obj, "enable", json_object_new_int(enable));
+    json_object_object_add(data_obj, "engine_status", json_object_new_int(engine_status));
+    ret = exec_with_result_line("uname -r", kernel_version, sizeof(kernel_version));
+    if (ret >= 0){
+        json_object_object_add(data_obj, "kernel_version", json_object_new_string(kernel_version));
+    }   
+    else{
+        json_object_object_add(data_obj, "kernel_version", json_object_new_string(""));
+    }
+
     json_object_object_add(data_obj, "config_enable", json_object_new_int(g_af_config.global.enable));
     json_object_object_add(data_obj, "time_mode", json_object_new_int(g_af_config.time.time_mode));
     json_object_object_add(data_obj, "match_time", json_object_new_int(g_af_status.match_time));
@@ -1463,9 +1568,10 @@ static struct ubus_method appfilter_object_methods[] = {
     UBUS_METHOD("class_list", handle_get_class_list, empty_policy),
     UBUS_METHOD("set_app_filter", handle_set_app_filter, empty_policy),
     UBUS_METHOD("get_app_filter", handle_get_app_filter, empty_policy),
-
     UBUS_METHOD("set_app_filter_base", handle_set_app_filter_base, empty_policy),
     UBUS_METHOD("get_app_filter_base", handle_get_app_filter_base, empty_policy),
+    UBUS_METHOD("set_app_filter_adv", handle_set_app_filter_adv, empty_policy),
+    UBUS_METHOD("get_app_filter_adv", handle_get_app_filter_adv, empty_policy),
     UBUS_METHOD("set_app_filter_time", handle_set_app_filter_time, empty_policy),
     UBUS_METHOD("get_app_filter_time", handle_get_app_filter_time, empty_policy),
     UBUS_METHOD("get_all_users", handle_get_all_users, empty_policy),

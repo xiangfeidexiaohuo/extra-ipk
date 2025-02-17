@@ -17,6 +17,9 @@
 #include <linux/etherdevice.h>
 #include <linux/cdev.h>
 #include <linux/device.h>
+#include <linux/tcp.h>
+#include <linux/ip.h>
+#include <linux/netfilter_ipv4.h>
 #include "app_filter.h"
 #include "af_utils.h"
 #include "af_log.h"
@@ -28,7 +31,7 @@
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("destan19@126.com");
 MODULE_DESCRIPTION("app filter module");
-MODULE_VERSION("5.0");
+MODULE_VERSION(AF_VERSION);
 struct list_head af_feature_head = LIST_HEAD_INIT(af_feature_head);
 
 DEFINE_RWLOCK(af_feature_lock);
@@ -45,6 +48,13 @@ DEFINE_RWLOCK(af_feature_lock);
 #define MAX_HOST_LEN 64
 #define MIN_HOST_LEN 4
 
+#if LINUX_VERSION_CODE > KERNEL_VERSION(5,10,197)
+extern void nf_send_reset(struct net *net, struct sock *sk, struct sk_buff *oldskb, int hook);
+#elif LINUX_VERSION_CODE > KERNEL_VERSION(4,4,1)
+extern void nf_send_reset(struct net *net,  struct sk_buff *oldskb, int hook);
+#else
+extern void nf_send_reset(sk_buff *oldskb, int hook);
+#endif
 
 int __add_app_feature(char *feature, int appid, char *name, int proto, int src_port,
 					  port_info_t dport_info, char *host_url, char *request_url, char *dict, char *search_str, int ignore)
@@ -389,6 +399,7 @@ void load_feature_buf_from_file(char **config_buf)
 #endif
 	off_t size;
 	fp = filp_open(AF_FEATURE_CONFIG_FILE, O_RDONLY, 0);
+	
 
 	if (IS_ERR(fp))
 	{
@@ -454,6 +465,7 @@ int load_feature_config(void)
 			begin = p + 1;
 		}
 	}
+
 	if (p != begin)
 	{
 		if (p - begin < MIN_FEATURE_LINE_LEN || p - begin > MAX_FEATURE_LINE_LEN)
@@ -481,6 +493,17 @@ static void af_clean_feature_list(void)
 	feature_list_write_unlock();
 }
 
+void af_add_feature_msg_handle(char *data, int len)
+{
+	char feature[MAX_FEATURE_LINE_LEN] = {0};
+	if (len <= 0 || len >= MAX_FEATURE_LINE_LEN){
+		printk("warn, feature data len = %d\n", len);
+		return;
+	}
+	strncpy(feature, data, len);
+	AF_INFO("add feature %s\n", feature);
+	af_init_feature(feature);
+}
 // free by caller
 static unsigned char *read_skb(struct sk_buff *skb, unsigned int from, unsigned int len)
 {
@@ -1164,6 +1187,17 @@ u_int32_t app_filter_hook_bypass_handle(struct sk_buff *skb, struct net_device *
 		if (g_oaf_filter_enable){
 			if (match_app_filter_rule(flow.app_id, client)){
 				flow.drop = 1;
+				AF_LMT_INFO("##Drop appid %d\n",flow.app_id);
+				if (skb->protocol == htons(ETH_P_IP) && g_tcp_rst){
+				#if LINUX_VERSION_CODE > KERNEL_VERSION(5,10,197)
+					nf_send_reset(&init_net, skb->sk, skb, NF_INET_PRE_ROUTING);
+				#elif LINUX_VERSION_CODE > KERNEL_VERSION(4,4,1)
+					nf_send_reset(&init_net, skb, NF_INET_PRE_ROUTING);
+				#else
+					nf_send_reset(skb, NF_INET_PRE_ROUTING);
+				#endif
+				}
+
 			}
 		}
 		conn->drop = flow.drop;
@@ -1192,8 +1226,6 @@ EXIT:
 	return ret;
 }
 
-
-
 u_int32_t app_filter_hook_gateway_handle(struct sk_buff *skb, struct net_device *dev)
 {
 	unsigned long long total_packets = 0;
@@ -1208,7 +1240,7 @@ u_int32_t app_filter_hook_gateway_handle(struct sk_buff *skb, struct net_device 
 	u_int8_t drop = 0;
 	u_int8_t malloc_data = 0;
 
-	if (!strstr(dev->name, "lan"))
+	if (!strstr(dev->name, g_lan_ifname))
 		return NF_ACCEPT;
 
 	memset((char *)&flow, 0x0, sizeof(flow_info_t));
@@ -1285,6 +1317,26 @@ u_int32_t app_filter_hook_gateway_handle(struct sk_buff *skb, struct net_device 
 		}
 	}
 	ct->mark = flow.app_id;
+	if (g_oaf_filter_enable){
+		if (match_app_filter_rule(flow.app_id, client))
+		{
+			ct->mark |= NF_DROP_BIT;
+			flow.drop = 1;
+			AF_LMT_INFO("##Drop app %s flow, appid is %d\n", flow.app_name, flow.app_id);
+			if (skb->protocol == htons(ETH_P_IP) && g_tcp_rst){
+			#if LINUX_VERSION_CODE > KERNEL_VERSION(5,10,197)
+				nf_send_reset(&init_net, skb->sk, skb, NF_INET_PRE_ROUTING);
+			#elif LINUX_VERSION_CODE > KERNEL_VERSION(4,4,1)
+				nf_send_reset(&init_net, skb, NF_INET_PRE_ROUTING);
+			#else
+				nf_send_reset(skb, NF_INET_PRE_ROUTING);
+			#endif
+			}
+			ret = NF_DROP;
+		}
+	}
+
+
 	if (g_oaf_record_enable){
 		AF_CLIENT_LOCK_W();
 		af_update_client_app_info(client, flow.app_id, flow.drop);
@@ -1292,15 +1344,7 @@ u_int32_t app_filter_hook_gateway_handle(struct sk_buff *skb, struct net_device 
 		AF_LMT_INFO("match %s %pI4(%d)--> %pI4(%d) len = %d, %d\n ", IPPROTO_TCP == flow.l4_protocol ? "tcp" : "udp",
 					&flow.src, flow.sport, &flow.dst, flow.dport, skb->len, flow.app_id);
 	}
-
-	if (g_oaf_filter_enable){
-		if (match_app_filter_rule(flow.app_id, client))
-		{
-			ct->mark |= NF_DROP_BIT;
-			AF_LMT_INFO("##Drop app %s flow, appid is %d\n", flow.app_name, flow.app_id);
-			ret = NF_DROP;
-		}
-	}
+	
 EXIT:
 	if (malloc_data)
 	{
@@ -1432,6 +1476,7 @@ static void oaf_timer_func(unsigned long ptr)
 	}
 	count++;
 	af_conn_clean_timeout();
+
 	mod_timer(&oaf_timer, jiffies + OAF_TIMER_INTERVAL * HZ);
 }
 
@@ -1500,13 +1545,25 @@ fail:
 	return ret;
 }
 
-static void oaf_user_msg_handle(af_msg_t *msg)
+static void oaf_user_msg_handle(char *data, int len)
 {
+	char *msg_data = data + sizeof(af_msg_t);
+	if (len < sizeof(af_msg_t))
+		return;
+	af_msg_t *msg = (af_msg_t *)data;
+	AF_INFO("msg action = %d\n", msg->action);
 	switch (msg->action)
 	{
 	case AF_MSG_INIT:
 		af_client_list_reset_report_num();
 		report_flag = 1;
+		break;
+	case AF_MSG_ADD_FEATURE:
+		af_add_feature_msg_handle(msg_data, len - sizeof(af_msg_t));
+		break;
+	case AF_MSG_CLEAN_FEATURE:
+		AF_INFO("clean feature\n");
+		af_clean_feature_list();
 		break;
 	default:
 		break;
@@ -1530,7 +1587,7 @@ static void oaf_msg_rcv(struct sk_buff *skb)
 		udata = umsg + sizeof(struct af_msg_hdr);
 
 		if (udata)
-			oaf_user_msg_handle((af_msg_t *)udata);
+			oaf_user_msg_handle(udata, af_hdr->len);
 	}
 }
 
@@ -1552,10 +1609,6 @@ int netlink_oaf_init(void)
 static int __init app_filter_init(void)
 {
 	int err;
-	if (0 != load_feature_config())
-	{
-		return -1;
-	}
 	af_conn_init();
 	netlink_oaf_init();
 	af_log_init();

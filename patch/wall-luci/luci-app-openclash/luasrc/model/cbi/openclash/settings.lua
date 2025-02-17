@@ -14,7 +14,7 @@ font_off = [[</b>]]
 bold_on  = [[<strong>]]
 bold_off = [[</strong>]]
 
-local op_mode = string.sub(luci.sys.exec('uci get openclash.config.operation_mode 2>/dev/null'),0,-2)
+local op_mode = uci:get("openclash", "config", "operation_mode")
 if not op_mode then op_mode = "redir-host" end
 local lan_ip = fs.lanip()
 m = Map("openclash", translate("Plugin Settings"))
@@ -123,12 +123,6 @@ if op_mode == "fake-ip" then
 o = s:taboption("dns", DummyValue, "flush_fakeip_cache", translate("Flush Fake-IP Cache"))
 o.template = "openclash/flush_fakeip_cache"
 end
-
-o = s:taboption("dns", Flag, "disable_masq_cache", translate("Disable Dnsmasq's DNS Cache"))
-o.description = translate("Recommended Enabled For Avoiding Some Connection Errors")..font_red..bold_on..translate("(Maybe Incompatible For Your Firmware)")..bold_off..font_off
-o.default = 0
-o:depends("enable_redirect_dns", "1")
-o:depends("enable_redirect_dns", "0")
 
 o = s:taboption("dns", Flag, "enable_custom_domain_dns_server", translate("Enable Specify DNS Server"))
 o.default = 0
