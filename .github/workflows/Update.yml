@@ -55,7 +55,7 @@ jobs:
         rm -rf ./patch/wall-luci/luci-app-passwall2
         rm -rf ./patch/wall-luci/luci-app-ssr-plus
         rm -rf ./patch/wall-luci/luci-app-openclash
-        rm -rf ./op-smartdns/luci-app-smartdns
+        # rm -rf ./op-smartdns/luci-app-smartdns
         rm -rf ./theme/luci-theme-argon-18.06
         rm -rf ./theme/luci-theme-argon
         rm -rf ./luci-app-oled
@@ -172,8 +172,9 @@ jobs:
 
 
        
-        git clone https://github.com/pymumu/luci-app-smartdns -b lede ./op-smartdns/luci-app-smartdns
-        rm -rf ./op-smartdns/luci-app-smartdns/.git
+        # git clone https://github.com/pymumu/luci-app-smartdns -b lede ./op-smartdns/luci-app-smartdns
+        # rm -rf ./op-smartdns/luci-app-smartdns/.git
+        # cp -af ./op-smartdns/luci-app-smartdns/po/zh-cn ./op-smartdns/luci-app-smartdns/po/zh_Hans
 
 
         git clone https://github.com/jerrykuku/luci-theme-argon ./theme/luci-theme-argon
