@@ -1,0 +1,16 @@
+#!/bin/sh
+
+if [ "$(grep 'AMD' /proc/cpuinfo)" != "" ]; then
+TEMP="$(sensors 2>/dev/null | grep 'Tctl' )"
+else
+TEMP="$(sensors 2>/dev/null | grep 'Core 0' )"
+fi
+     if  [ -n "${TEMP}" ] ;then
+     
+        if [ "$(grep 'AMD' /proc/cpuinfo)" != "" ]; then     
+        TEMP="$(sensors 2>/dev/null | grep 'Tctl' | cut -c16-  | awk  -F '°' '{print $1}')"
+        else
+        TEMP="$(sensors 2>/dev/null | grep 'Core 0' | cut -c12-  | awk  -F '°' '{print $1}')"
+	fi
+        printf '%.f' $TEMP
+     fi
