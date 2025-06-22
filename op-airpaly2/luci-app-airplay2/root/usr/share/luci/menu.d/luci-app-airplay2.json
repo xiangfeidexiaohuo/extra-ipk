@@ -1,0 +1,13 @@
+{
+	"admin/services/airplay2": {
+		"title": "Airplay 2",
+		"action": {
+			"type": "view",
+			"path": "airplay2"
+		},
+		"depends": {
+			"acl": [ "luci-app-airplay2" ],
+			"uci": { "airplay2": true }
+		}
+	}
+}
