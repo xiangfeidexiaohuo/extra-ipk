@@ -755,7 +755,7 @@
                 },
                 {
                     element: DOMCache.watchdog,
-                    content: status.watchdog ? '&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<%:Daemons%>:&nbsp;&nbsp;&nbsp;<b style=color:green><%:Running%></b>' : '&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<%:Daemons%>:&nbsp;&nbsp;&nbsp;<b style=color:red><%:Not Running%></b>'
+                    content: status.watchdog ? '&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<%:Daemons%>:&nbsp;&nbsp;&nbsp;<b style=color:green><%:Running%></b>' : ''
                 }
             ];
 
@@ -860,6 +860,7 @@
                 DOMCache.dns_setting_respect_de.innerHTML = "<b style=color:red><%:Not Running%></b>";
                 DOMCache.oc_setting_oversea_de.innerHTML = "<b style=color:red><%:Not Running%></b>";
                 DOMCache.daip.innerHTML = "<b style=color:red><%:Not Running%></b>";
+                DOMCache.dapo.innerHTML = "";
             }
 
             StateManager.current_status = status;
@@ -1721,10 +1722,15 @@
                         var translatedWarning = '<%:' + warningMsg + '%>';
                         alert('<%:Warning:%> ' + translatedWarning + '\n\n<%:PAC file URL:%> ' + data.pac_url);
                     } else {
-                        copyToClipboard(data.pac_url, '<%:PAC file URL copied:%> ');
+                        var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+                        if (isSafari) {
+                            prompt('<%:PAC file URL generated, please copy:%>', data.pac_url);
+                        } else {
+                            copyToClipboard(data.pac_url, '<%:PAC file URL copied:%> ');
+                        }
                     }
                 } else if (data.error) {
-                    alert('<%:PAC file generation failed:%> ' + data.error);
+                    alert('<%:PAC file generation failed%>: ' + data.error);
                 } else {
                     alert('<%:PAC file generation failed%>');
                 }
