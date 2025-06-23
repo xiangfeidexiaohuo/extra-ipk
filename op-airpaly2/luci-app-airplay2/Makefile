@@ -9,7 +9,7 @@ PKG_NAME:=luci-app-airplay2
 PKG_VERSION:=1.0.0
 PKG_RELEASE:=1
 
-LUCI_TITLE:=LuCI support for MentoHUST
+LUCI_TITLE:=Luci for Apple Airplay2 Receiver
 LUCI_DEPENDS:=+alsa-utils +airplay2-openssl
 LUCI_PKGARCH:=all
 

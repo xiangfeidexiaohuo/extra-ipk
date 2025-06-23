@@ -113,7 +113,7 @@ jobs:
         git clone https://github.com/fw876/helloworld ./patch/wall/helloworld
         mv ./patch/wall/helloworld/redsocks2 ./patch/wall/
         mv ./patch/wall/helloworld/lua-neturl ./patch/wall/
-        mv ./patch/wall/helloworld/shadow-tls ./patch/wall/
+        ## mv ./patch/wall/helloworld/shadow-tls ./patch/wall/
         
         mv ./patch/wall/helloworld/dns2tcp ./patch/wall/
         mv ./patch/wall/helloworld/dns2socks-rust ./patch/wall/
