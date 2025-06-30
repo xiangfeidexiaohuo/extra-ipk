@@ -48,6 +48,7 @@
     z-index: 1;
     min-height: auto;
     line-height: 1;
+    padding-top: 5px;
 }
 
 .oc .developer-avatar-container {
@@ -321,8 +322,6 @@
     var immortalwrt = document.getElementById('_immortalwrt');
     var lmc999 = document.getElementById('_lmc999');
     var MetaCubeX = document.getElementById('_MetaCubeX');
-    var enable = document.getElementById('cbi-table-1-enable');
-    var disable = document.getElementById('cbi-table-1-disable');
 
     function getAvatarSize() {
         var width = window.innerWidth;
@@ -365,9 +364,6 @@
     window.addEventListener('resize', function() {
         setAvatars();
     });
-
-    if (enable) enable.style.textAlign = "center";
-    if (disable) disable.style.textAlign = "center";
     
     function Dreamacro_rediret() {
         window.open('https://github.com/Dreamacro');
