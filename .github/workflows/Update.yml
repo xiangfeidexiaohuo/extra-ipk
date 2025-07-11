@@ -44,7 +44,6 @@ jobs:
         rm -rf ./op-oaf
         rm -rf ./op-mosdns/*
         rm -rf ./op-alist/*
-        rm -rf ./op-openlist/*
         rm -rf ./op-ddnsgo/*
         rm -rf ./op-lucky/*
         rm -rf ./patch/wall-luci/luci-app-nikki
@@ -162,12 +161,6 @@ jobs:
         mv ./op-alist/tmp/luci-app-alist ./op-alist/
         mv ./op-alist/tmp/alist ./op-alist/
         rm -rf ./op-alist/tmp 
-        
-        
-        git clone https://github.com/sbwml/luci-app-openlist ./op-openlist/tmp
-        mv ./op-openlist/tmp/luci-app-openlist ./op-openlist/
-        mv ./op-openlist/tmp/openlist ./op-openlist/
-        rm -rf ./op-openlist/tmp 
         
         
         git clone https://github.com/UnblockNeteaseMusic/luci-app-unblockneteasemusic -b master ./luci-app-unblockneteasemusic/
