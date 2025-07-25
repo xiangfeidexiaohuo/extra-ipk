@@ -6,7 +6,7 @@ PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/XTLS/Xray-core/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=f157afdae24d9abe49a5bb1745b8586f9b99f47c0633b9ca7000121829ca7e62
+PKG_HASH:=a73c2c80ae1878a2b5b9ee5d5682767157563a3125c5df8799c730d8b384230c
 
 PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 PKG_LICENSE:=MPL-2.0
