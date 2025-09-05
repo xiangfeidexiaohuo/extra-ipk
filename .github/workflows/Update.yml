@@ -107,24 +107,23 @@ jobs:
         
         git clone https://github.com/xiaorouji/openwrt-passwall-packages ./patch/wall
         rm -rf ./patch/wall/.github
-        # rm -rf ./patch/wall/chinadns-ng
-        
+  
         git clone https://github.com/fw876/helloworld ./patch/wall/helloworld
         mv ./patch/wall/helloworld/redsocks2 ./patch/wall/
-        mv ./patch/wall/helloworld/lua-neturl ./patch/wall/
-        ## mv ./patch/wall/helloworld/shadow-tls ./patch/wall/
-        
+        mv ./patch/wall/helloworld/lua-neturl ./patch/wall/    
         mv ./patch/wall/helloworld/dns2tcp ./patch/wall/
         mv ./patch/wall/helloworld/dns2socks-rust ./patch/wall/
         mv ./patch/wall/helloworld/trojan ./patch/wall/
-        mv ./patch/wall/helloworld/dnsproxy ./patch/wall/ 
-        
+        mv ./patch/wall/helloworld/dnsproxy ./patch/wall/      
+               
         mv ./patch/wall/helloworld/luci-app-ssr-plus ./patch/wall-luci/
         
         rm -rf ./patch/wall/gn
-        # rm -rf ./patch/wall/naiveproxy
         mv ./patch/wall/helloworld/gn ./patch/wall/
+        # rm -rf ./patch/wall/naiveproxy
         # mv ./patch/wall/helloworld/naiveproxy ./patch/wall/
+        rm -rf ./patch/wall/xray-core
+        mv ./patch/wall/helloworld/xray-core ./patch/wall/
         
         rm -rf ./patch/wall/helloworld
     
