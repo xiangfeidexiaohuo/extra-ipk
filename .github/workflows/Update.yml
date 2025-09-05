@@ -123,7 +123,7 @@ jobs:
         # rm -rf ./patch/wall/naiveproxy
         # mv ./patch/wall/helloworld/naiveproxy ./patch/wall/
         rm -rf ./patch/wall/xray-core
-        mv ./patch/wall/helloworld/xray-core ./patch/wall/
+        # mv ./patch/wall/helloworld/xray-core ./patch/wall/
         
         rm -rf ./patch/wall/helloworld
     
