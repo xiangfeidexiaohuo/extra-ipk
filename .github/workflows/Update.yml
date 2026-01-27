@@ -58,6 +58,8 @@ jobs:
         # rm -rf ./theme/luci-theme-argon
         rm -rf ./luci-app-oled
         rm -rf ./op-go-aliyundrive/*
+        rm -rf ./patch/wall-luci/luci-app-passwall
+        rm -rf ./patch/wall-luci/luci-app-passwall2
         
          
         git clone https://github.com/zzsj0928/luci-app-pushbot ./luci-app-pushbot
@@ -116,6 +118,19 @@ jobs:
         mv ./patch/wall/helloworld/* ./patch/wall/
         rm -rf ./patch/wall/helloworld
     
+        git clone https://github.com/xiaorouji/openwrt-passwall ./patch/wall-luci/pass
+        git clone https://github.com/xiaorouji/openwrt-passwall2 ./patch/wall-luci/pass2
+        mv ./patch/wall-luci/pass/luci-app-passwall ./patch/wall-luci/
+        mv ./patch/wall-luci/pass2/luci-app-passwall2 ./patch/wall-luci/
+        rm -rf ./patch/wall-luci/pass
+        rm -rf ./patch/wall-luci/pass2
+
+        git clone https://github.com/Openwrt-Passwall/openwrt-passwall-packages ./patch/wall/pass
+        mv ./patch/wall/pass/geoview ./patch/wall/
+        mv ./patch/wall/pass/sing-box ./patch/wall/
+        mv ./patch/wall/pass/trojan-plus ./patch/wall/
+        mv ./patch/wall/pass/v2ray-geodata ./patch/wall/
+        rm -rf ./patch/wall/pass
 
         git clone --depth=1 https://github.com/vernesong/OpenClash.git -b dev
         mv ./OpenClash/luci-app-openclash ./patch/wall-luci/
