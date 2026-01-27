@@ -118,8 +118,8 @@ jobs:
         mv ./patch/wall/helloworld/* ./patch/wall/
         rm -rf ./patch/wall/helloworld
     
-        git clone https://github.com/xiaorouji/openwrt-passwall ./patch/wall-luci/pass
-        git clone https://github.com/xiaorouji/openwrt-passwall2 ./patch/wall-luci/pass2
+        git clone https://github.com/Openwrt-Passwall/openwrt-passwall ./patch/wall-luci/pass
+        git clone https://github.com/Openwrt-Passwall/openwrt-passwall2 ./patch/wall-luci/pass2
         mv ./patch/wall-luci/pass/luci-app-passwall ./patch/wall-luci/
         mv ./patch/wall-luci/pass2/luci-app-passwall2 ./patch/wall-luci/
         rm -rf ./patch/wall-luci/pass
