@@ -1894,9 +1894,9 @@ if [ -n "$FW4" ]; then
       nft 'add rule inet fw4 mangle_prerouting meta nfproto {ipv4} meta l4proto {tcp,udp} counter jump openclash_mangle'
 
       #TUN FORWORD
-      nft insert rule inet fw4 forward position 0 meta l4proto {tcp,udp} oifname utun counter accept comment \"OpenClash TUN Forward\"
-      nft insert rule inet fw4 forward position 0 meta l4proto {tcp,udp} iifname utun counter accept comment \"OpenClash TUN Forward\"
-      nft insert rule inet fw4 input position 0 meta l4proto {tcp,udp} iifname utun counter accept comment \"OpenClash TUN Input\"
+      nft insert rule inet fw4 forward position 0 meta nfproto {ipv4} oifname utun counter accept comment \"OpenClash TUN Forward\"
+      nft insert rule inet fw4 forward position 0 meta nfproto {ipv4} iifname utun counter accept comment \"OpenClash TUN Forward\"
+      nft insert rule inet fw4 input position 0 meta nfproto {ipv4} iifname utun counter accept comment \"OpenClash TUN Input\"
       nft insert rule inet fw4 srcnat position 0 meta nfproto {ipv4} oifname utun counter return comment \"OpenClash TUN Postrouting\"
 
       #quic
