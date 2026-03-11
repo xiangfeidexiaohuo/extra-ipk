@@ -298,31 +298,37 @@
                     update_tip.innerHTML = '<b><font><%:Note: options will auto-save when you click to update or download%></font></b>';
                 }
             }
-            else if ( status.startlog.match("level=fatal") || status.startlog.indexOf("FTL [Config]") != "-1" ) {
+            else if ( status.startlog.match("level=fatal")) {
                 XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash", "del_start_log")%>', null, function(x) {});
                 if ( status.startlog.match("level=fatal") ) {
                     alert('<%:OpenClash Start Failed%> :\n\n' + status.startlog.split('msg=')[1]);
                 }
-                else {
-                    alert('<%:OpenClash Start Failed%> :\n\n' + status.startlog.split('FTL [Config] ')[1]);
-                }
             }
             else if ( status.startlog != "\n" && status.startlog != "" && status.startlog != "##FINISH##\n" ) {
-                if ( status.startlog.match("Tip:") || status.startlog.match("提示：")) {
+                if ( status.startlog.match("[tip]") || status.startlog.match("[提示]")) {
                     update_tip.innerHTML = '<b style=color:#ff6f00>'+status.startlog+'</b>';
                 }
-                else if ( status.startlog.match("Error:") || status.startlog.match("错误：")) {
+                else if ( status.startlog.match("[error]") || status.startlog.match("[错误]")) {
                     update_tip.innerHTML = '<b style=color:#FF0000>'+status.startlog+'</b>';
                 }
-                else if ( status.startlog.match("Warning:") || status.startlog.match("警告：")) {
+                else if ( status.startlog.match("[warning]") || status.startlog.match("[警告]")) {
                     update_tip.innerHTML = '<b style=color:#ff00bb>'+status.startlog+'</b>';
                 }
-                else if ( status.startlog.match("Watchdog:") || status.startlog.match("守护程序：")) {
+                else if ( status.startlog.match("[watchdog]") || status.startlog.match("[守护程序]")) {
                     update_tip.innerHTML = '<b style=color:#b300ff>'+status.startlog+'</b>';
                 }
                 else {
                     update_tip.innerHTML = '<b style=color:green>'+status.startlog+'</b>';
                 }
+
+				for (var levelKey in window.levelTranslations) {
+					var translatedText = '[' + window.levelTranslations[levelKey] + ']';
+					if (status.startlog.match(translatedText)) {
+						update_tip.innerHTML = '<b style=color:var(--' + levelKey + '-color)>' + status.startlog + '</b>';
+						break;
+					}
+				}
+				update_tip.innerHTML = '<b style=color:var(--info-color)>' + status.startlog + '</b>';
             }
         }
     }
