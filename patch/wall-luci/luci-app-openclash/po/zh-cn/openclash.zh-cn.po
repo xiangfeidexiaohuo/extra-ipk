@@ -1224,8 +1224,8 @@ msgstr "最新客户端版本"
 msgid "Download Latest Client"
 msgstr "下载最新版本客户端"
 
-msgid "Restore Default Config"
-msgstr "还原默认配置"
+msgid "Restore Default"
+msgstr "还原默认"
 
 msgid "Failed to get the latest version. Please try again later!"
 msgstr "最新版本获取失败，请稍后再试！"
@@ -2022,9 +2022,6 @@ msgstr "备份文件"
 msgid "Backup File Restore Successful!"
 msgstr "备份文件恢复成功！"
 
-msgid "Backup OpenClash"
-msgstr "备份 OpenClash"
-
 msgid "Not Select"
 msgstr "未选择"
 
@@ -2615,9 +2612,6 @@ msgstr "港澳台限定"
 
 msgid "Taiwan Only"
 msgstr "台湾限定"
-
-msgid "Backup Section"
-msgstr "插件备份"
 
 msgid "Backup Exclude Cores"
 msgstr "不备份内核"
