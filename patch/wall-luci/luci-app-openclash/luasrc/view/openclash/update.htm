@@ -7,8 +7,8 @@
 <fieldset class="cbi-section">
 	<table width="100%">
 	  <tr><td width="100%" colspan="6">
-	    <p align="center" id="update_tip">
-	  		<b><%:Note: if the update fails, you can manually download and upload%></b>
+	    <p align="center" id="update_tip" class="oc" style="background-color: unset;">
+	  		<b style="color: var(--info-color);"><%:Note: if the update fails, you can manually download and upload%></b>
 	  	</p>
 	  </td></tr>
 	  <tr><td width="16.6%" align="right"><%:Compiled Version%></td>
@@ -289,13 +289,13 @@
             if ( status.startlog == "\n" || status.startlog == "" || status.startlog == "##FINISH##\n" ) {
                 var rdmdl = Math.floor(Math.random()*3)+1;
                 if(rdmdl == 1) {
-                    update_tip.innerHTML = '<b><font><%:Note: if the update fails, you can manually download and upload%></font></b>';
+                    update_tip.innerHTML = '<b style=color:var(--info-color)><%:Note: if the update fails, you can manually download and upload%></b>';
                 }
                 else if(rdmdl == 2) {
-                    update_tip.innerHTML = '<b><font><%:Note: the client may not support update, because the firmware with squashfs format will not release flash space after updating%></font></b>';
+                    update_tip.innerHTML = '<b style=color:var(--info-color)><%:Note: the client may not support update, because the firmware with squashfs format will not release flash space after updating%></b>';
                 }
                 else if(rdmdl == 3) {
-                    update_tip.innerHTML = '<b><font><%:Note: options will auto-save when you click to update or download%></font></b>';
+                    update_tip.innerHTML = '<b style=color:var(--info-color)><%:Note: options will auto-save when you click to update or download%></b>';
                 }
             }
             else if ( status.startlog.match("level=fatal")) {
@@ -305,27 +305,11 @@
                 }
             }
             else if ( status.startlog != "\n" && status.startlog != "" && status.startlog != "##FINISH##\n" ) {
-                if ( status.startlog.match("[tip]") || status.startlog.match("[提示]")) {
-                    update_tip.innerHTML = '<b style=color:#ff6f00>'+status.startlog+'</b>';
-                }
-                else if ( status.startlog.match("[error]") || status.startlog.match("[错误]")) {
-                    update_tip.innerHTML = '<b style=color:#FF0000>'+status.startlog+'</b>';
-                }
-                else if ( status.startlog.match("[warning]") || status.startlog.match("[警告]")) {
-                    update_tip.innerHTML = '<b style=color:#ff00bb>'+status.startlog+'</b>';
-                }
-                else if ( status.startlog.match("[watchdog]") || status.startlog.match("[守护程序]")) {
-                    update_tip.innerHTML = '<b style=color:#b300ff>'+status.startlog+'</b>';
-                }
-                else {
-                    update_tip.innerHTML = '<b style=color:green>'+status.startlog+'</b>';
-                }
-
 				for (var levelKey in window.levelTranslations) {
 					var translatedText = '[' + window.levelTranslations[levelKey] + ']';
 					if (status.startlog.match(translatedText)) {
 						update_tip.innerHTML = '<b style=color:var(--' + levelKey + '-color)>' + status.startlog + '</b>';
-						break;
+						return;
 					}
 				}
 				update_tip.innerHTML = '<b style=color:var(--info-color)>' + status.startlog + '</b>';
