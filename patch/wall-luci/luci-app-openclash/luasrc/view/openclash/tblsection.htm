@@ -51,11 +51,8 @@ else
     end
 end
 
-local cfg_name
-if os.getenv("PATH_INFO") then
-    local cfg_path = string.match(os.getenv("PATH_INFO"), "/config/(.+)$")
-    cfg_name = cfg_path and string.match(cfg_path, "([^/]+)$") or nil
-end
+local cfg_name = fs.basename(fs.get_file_path_from_request())
+
 if not cfg_name and uci:get("openclash", "config", "config_path") then
     cfg_name = fs.basename(uci:get("openclash", "config", "config_path"))
 end
