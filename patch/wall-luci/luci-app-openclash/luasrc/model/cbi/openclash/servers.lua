@@ -7,6 +7,11 @@ local HTTP = require "luci.http"
 local DISP = require "luci.dispatcher"
 local file_path = fs.get_file_path_from_request()
 
+if not file_path then
+	HTTP.redirect(DISP.build_url("admin", "services", "openclash", "config"))
+	return
+end
+
 m = Map(openclash, translate("Servers & Groups manage"))
 m.pageaction = false
 m.redirect = DISP.build_url("admin/services/openclash/servers") .. "?file=" .. HTTP.urlencode(file_path)
@@ -23,9 +28,7 @@ gs.anonymous = true
 gs.addremove = true
 gs.sortable = true
 gs.template = "openclash/tblsection"
-gs.extedit = function(self, section)
-	return DISP.build_url("admin/services/openclash/groups-config/%s") % {section} .. "?file=" .. HTTP.urlencode(file_path)
-end
+gs.extedit = DISP.build_url("admin/services/openclash/groups-config/%s").."?file="..file_path
 function gs.create(self, section)
 	local sid = TypedSection.create(self, section)
 	if sid then
@@ -67,9 +70,7 @@ ps.anonymous = true
 ps.addremove = true
 ps.sortable = true
 ps.template = "openclash/tblsection"
-ps.extedit = function(self, section)
-	return DISP.build_url("admin/services/openclash/proxy-provider-config/%s") % {section} .. "?file=" .. HTTP.urlencode(file_path)
-end
+ps.extedit = DISP.build_url("admin/services/openclash/proxy-provider-config/%s").."?file="..file_path
 function ps.create(self, section)
 	local sid = TypedSection.create(self, section)
 	if sid then
@@ -110,9 +111,7 @@ ss.anonymous = true
 ss.addremove = true
 ss.sortable = true
 ss.template = "openclash/tblsection"
-ss.extedit = function(self, section)
-	return DISP.build_url("admin/services/openclash/servers-config/%s") % {section} .. "?file=" .. HTTP.urlencode(file_path)
-end
+ss.extedit = DISP.build_url("admin/services/openclash/servers-config/%s").."?file="..file_path
 function ss.create(self, section)
 	local sid = TypedSection.create(self, section)
 	if sid then

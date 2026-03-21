@@ -339,7 +339,7 @@ function uci_get_config(section, key)
 end
 
 function get_file_path_from_request()
-	local file_path = ""
+	local file_path
 	local referer = HTTP.getenv("HTTP_REFERER")
 	if referer then
 		local _, _, file_value = referer:find("file=([^&]*)$")
@@ -348,9 +348,9 @@ function get_file_path_from_request()
 		end
 	end
 
-	if file_path == "" or file_path == "/" then
-		file_path = HTTP.formvalue("file") or ""
-		if file_path ~= "" then
+	if not file_path or file_path == "/" then
+		file_path = HTTP.formvalue("file")
+		if not file_path then
 			file_path = HTTP.urldecode(file_path)
 		end
 	end

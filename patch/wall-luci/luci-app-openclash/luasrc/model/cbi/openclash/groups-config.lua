@@ -9,6 +9,11 @@ local DISP = require "luci.dispatcher"
 local sid = arg[1]
 local file_path = fs.get_file_path_from_request()
 
+if not file_path then
+	HTTP.redirect(DISP.build_url("admin", "services", "openclash", "servers"))
+	return
+end
+
 font_red = [[<b style=color:red>]]
 font_off = [[</b>]]
 bold_on = [[<strong>]]
