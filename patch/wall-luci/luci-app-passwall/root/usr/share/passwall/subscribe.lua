@@ -492,9 +492,7 @@ local function processData(szType, content, add_mode, group)
 		for _, v in pairs(split(dat[2], '&')) do
 			local s = v:find("=", 1, true)
 			if s and s > 1 then
-				local key = v:sub(1, s - 1)
-				local val = v:sub(s + 1)
-				params[key] = val
+				params[v:sub(1, s - 1)] = v:sub(s + 1)
 			end
 		end
 		result.obfs_param = base64Decode(params.obfsparam)
@@ -653,9 +651,7 @@ local function processData(szType, content, add_mode, group)
 			for _, v in pairs(split(query[2], '&')) do
 				local s = v:find("=", 1, true)
 				if s and s > 1 then
-					local key = v:sub(1, s - 1)
-					local val = v:sub(s + 1)
-					params[key] = UrlDecode(val)
+					params[v:sub(1, s - 1)] = UrlDecode(v:sub(s + 1))
 				end
 			end
 			if params.plugin then
@@ -985,9 +981,7 @@ local function processData(szType, content, add_mode, group)
 			for _, v in pairs(split(query[2], '&')) do
 				local s = v:find("=", 1, true)
 				if s and s > 1 then
-					local key = v:sub(1, s - 1)
-					local val = v:sub(s + 1)
-					params[key] = UrlDecode(val)
+					params[v:sub(1, s - 1)] = UrlDecode(v:sub(s + 1))
 				end
 			end
 			-- [2001:4860:4860::8888]:443
@@ -1155,9 +1149,7 @@ local function processData(szType, content, add_mode, group)
 			for _, v in pairs(split(query[2], '&')) do
 				local s = v:find("=", 1, true)
 				if s and s > 1 then
-					local key = v:sub(1, s - 1)
-					local val = v:sub(s + 1)
-					params[key] = UrlDecode(val)
+					params[v:sub(1, s - 1)] = UrlDecode(v:sub(s + 1))
 				end
 			end
 			-- [2001:4860:4860::8888]:443
@@ -1335,9 +1327,7 @@ local function processData(szType, content, add_mode, group)
 		for _, v in pairs(split(query[2], '&')) do
 			local s = v:find("=", 1, true)
 			if s and s > 1 then
-				local key = v:sub(1, s - 1)
-				local val = v:sub(s + 1)
-				params[key] = val
+				params[v:sub(1, s - 1)] = v:sub(s + 1)
 			end
 		end
 		-- [2001:4860:4860::8888]:443
@@ -1389,9 +1379,7 @@ local function processData(szType, content, add_mode, group)
 		for _, v in pairs(split(query[2], '&')) do
 			local s = v:find("=", 1, true)
 			if s and s > 1 then
-				local key = v:sub(1, s - 1):lower()
-				local val = v:sub(s + 1)
-				params[key] = UrlDecode(val)
+				params[v:sub(1, s - 1):lower()] = UrlDecode(v:sub(s + 1))
 			end
 		end
 		-- [2001:4860:4860::8888]:443
@@ -1476,9 +1464,7 @@ local function processData(szType, content, add_mode, group)
 		for _, v in pairs(split(query[2], '&')) do
 			local s = v:find("=", 1, true)
 			if s and s > 1 then
-				local key = v:sub(1, s - 1):lower()
-				local val = v:sub(s + 1)
-				params[key] = UrlDecode(val)
+				params[v:sub(1, s - 1):lower()] = UrlDecode(v:sub(s + 1))
 			end
 		end
 		if host_port:find(":") then
@@ -1535,9 +1521,7 @@ local function processData(szType, content, add_mode, group)
 			for _, v in pairs(split(query[2], '&')) do
 				local s = v:find("=", 1, true)
 				if s and s > 1 then
-					local key = v:sub(1, s - 1)
-					local val = v:sub(s + 1)
-					params[key] = UrlDecode(val)
+					params[v:sub(1, s - 1)] = UrlDecode(v:sub(s + 1))
 				end
 			end
 			-- [2001:4860:4860::8888]:443
@@ -1622,9 +1606,7 @@ local function processData(szType, content, add_mode, group)
 		for _, v in pairs(split(query[2], '&')) do
 			local s = v:find("=", 1, true)
 			if s and s > 1 then
-				local key = v:sub(1, s - 1)
-				local val = v:sub(s + 1)
-				params[key] = UrlDecode(val)
+				params[v:sub(1, s - 1)] = UrlDecode(v:sub(s + 1))
 			end
 		end
 		if host_port:find(":") then
