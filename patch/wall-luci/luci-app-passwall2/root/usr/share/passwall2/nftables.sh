@@ -128,9 +128,7 @@ destroy_nftset() {
 
 gen_nft_tables() {
 	if ! nft list table "$NFTABLE_NAME" >/dev/null 2>&1; then
-		local nft_table_file="$TMP_PATH/PSW2_TABLE.nft"
-		# Set the correct priority to fit fw4
-		cat > "$nft_table_file" <<-EOF
+		nft -f - <<-EOF
 		table $NFTABLE_NAME {
 			chain dstnat {
 				type nat hook prerouting priority dstnat - 1; policy accept;
@@ -146,9 +144,6 @@ gen_nft_tables() {
 			}
 		}
 		EOF
-
-		nft -f "$nft_table_file"
-		rm -rf "$nft_table_file"
 	fi
 }
 
