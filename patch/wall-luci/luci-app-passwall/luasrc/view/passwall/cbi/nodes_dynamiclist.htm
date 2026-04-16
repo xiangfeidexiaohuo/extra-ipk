@@ -130,17 +130,18 @@ window.dl_dropdown_data["<%=cbid%>"] = <%=json.stringify(dropdown_data)%>;
 			dl_openPanel(cbid,display,panel,listContainer,searchInput);
 		}
 	});
+
 	dl_registerAdaptive(cbid);
-	setTimeout(() => {
-		init();
-		new Sortable(document.getElementById(cbid + ".selected"), {
-			animation: 150,
-			ghostClass: "dragging-row",
-			onEnd: function(){
-				dl_update_hidden(cbid);
-			}
-		});
-	}, 100);
+
+	init();
+
+	new Sortable(document.getElementById(cbid + ".selected"), {
+		animation: 150,
+		ghostClass: "dragging-row",
+		onEnd: function(){
+			dl_update_hidden(cbid);
+		}
+	});
 })();
 //]]>
 </script>
