@@ -334,7 +334,7 @@ end
 	if is_finded("mihomo") then
 		o:value("clash", translate("Clash/Mihomo"))
 	end
-	if is_finded("tuic-client") then
+	if is_finded("mihomo") then
 		o:value("tuic", translate("TUIC"))
 	end
 	if is_finded("shadow-tls") and is_finded("sslocal") then

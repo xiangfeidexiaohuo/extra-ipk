@@ -36,7 +36,7 @@ local has_ss_rust = luci.sys.exec('type -t -p sslocal 2>/dev/null || type -t -p 
 local has_ss_libev = luci.sys.exec('type -t -p ss-redir 2>/dev/null || type -t -p ss-local 2>/dev/null') ~= ""
 local has_xray = luci.sys.exec('type -t -p xray 2>/dev/null') ~= ""
 
-local tuic_type = luci.sys.exec('type -t -p tuic-client') ~= "" and "tuic"
+local tuic_type = luci.sys.exec('type -t -p mihomo -p /usr/libexec/mihomo 2>/dev/null') ~= "" and "tuic"
 local log = function(...)
 	print(os.date("%Y-%m-%d %H:%M:%S ") .. table.concat({...}, " "))
 end
@@ -1297,7 +1297,7 @@ local function processData(szType, content, cfgid)
 		end
 	elseif szType == "tuic" then
 		if not tuic_type then
-			log("跳过 TUIC 节点：本地未安装 tuic-client。")
+			log("跳过 TUIC 节点：本地未安装 mihomo。")
 			return nil
 		end
 

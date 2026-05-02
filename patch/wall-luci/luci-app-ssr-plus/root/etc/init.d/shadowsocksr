@@ -138,7 +138,7 @@ start_dns2tcp() {
 
 supports_builtin_dns() {
 	case "$1" in
-	clash|v2ray)
+	clash|tuic|v2ray)
 		return 0
 		;;
 	*)
@@ -164,7 +164,7 @@ get_builtin_dns_fallback_mode() {
 is_builtin_dns_active() {
 	local global_server_type="$(uci_get_by_name "$GLOBAL_SERVER" type)"
 	case "$global_server_type" in
-	clash)
+	clash|tuic)
 		ps_list | grep -v "grep" | grep -q "ssr-retcp"
 		;;
 	v2ray)
@@ -194,6 +194,42 @@ get_clash_cache_file() {
 
 get_clash_state_file() {
 	echo "$CLASH_CONFIG_DIR/$1.cache.db"
+}
+
+get_tuic_workdir() {
+	echo "$TMP_PATH/tuic-$1"
+}
+
+get_tuic_runtime_file() {
+	echo "$(get_tuic_workdir "$1")/config.yaml"
+}
+
+prepare_tuic_runtime_config() {
+	local sid="$1"
+	local local_port="$2"
+	local socks_port="$3"
+	local instance_key="${4:-$sid}"
+	local run_mode="${5:-redir}"
+	local runtime_file="$(get_tuic_runtime_file "$instance_key")"
+	local workdir="$(get_tuic_workdir "$instance_key")"
+
+	[ -n "$sid" ] || return 1
+	[ -n "$local_port" ] || return 1
+
+	mkdir -p "$workdir"
+	if ! /usr/bin/lua "$CLASH_YAML_HELPER" tuic "$sid" "$runtime_file" "$local_port" "$socks_port" "$run_mode" >/dev/null 2>&1; then
+		echolog "TUIC 节点运行配置生成失败：$sid"
+		return 1
+	fi
+
+	# Reuse existing local geodata files so Mihomo does not have to fetch them.
+	[ -s /usr/share/shadowsocksr/Country.mmdb ] && ln -sf /usr/share/shadowsocksr/Country.mmdb "$workdir/Country.mmdb"
+	[ -s /usr/share/shadowsocksr/Country.mmdb ] && ln -sf /usr/share/shadowsocksr/Country.mmdb "$workdir/geoip.metadb"
+	[ ! -e "$workdir/Country.mmdb" ] && [ -s /etc/openclash/Country.mmdb ] && ln -sf /etc/openclash/Country.mmdb "$workdir/Country.mmdb"
+	[ ! -e "$workdir/geoip.metadb" ] && [ -s /etc/openclash/Country.mmdb ] && ln -sf /etc/openclash/Country.mmdb "$workdir/geoip.metadb"
+	[ -s /etc/openclash/GeoSite.dat ] && ln -sf /etc/openclash/GeoSite.dat "$workdir/GeoSite.dat"
+	[ -s /usr/share/v2ray/geoip.dat ] && ln -sf /usr/share/v2ray/geoip.dat "$workdir/geoip.dat"
+	[ -s /usr/share/v2ray/geosite.dat ] && ln -sf /usr/share/v2ray/geosite.dat "$workdir/geosite.dat"
 }
 
 download_clash_config() {
@@ -983,15 +1019,10 @@ start_udp() {
 		echolog "UDP TPROXY Relay:$($(first_type "hysteria") version | grep Version | awk '{print "Hysteria2: " $2}') Started!"
 		;;
 	tuic)
-		# FIXME: ipt2socks cannot handle udp reply from tuic
-		# 20230726 uncomment following 4 lines
-		gen_config_file $UDP_RELAY_SERVER $type 2 $tmp_udp_local_port
-		ln_start_bin $(first_type tuic-client) tuic-client --config $udp_config_file
-		ln_start_bin $(first_type ipt2socks) ipt2socks -U -b 0.0.0.0 -4 -s 127.0.0.1 -p $tmp_udp_local_port -l $tmp_udp_port
-		echolog "UDP TPROXY Relay:$($(first_type tuic-client) --version) Started!"
-		echolog "TUIC UDP TPROXY Relay not supported!"
-		#redir_udp=0
-		#ARG_UDP=""
+		# TUIC now uses Mihomo directly and should follow the native path.
+		redir_udp=0
+		ARG_UDP=""
+		echolog "TUIC UDP relay is handled by the main Mihomo instance."
 		;;
 	shadowtls)
 		gen_config_file $UDP_RELAY_SERVER $type 2 ${tmp_udp_local_port}
@@ -1074,9 +1105,16 @@ start_local() {
 		;;
 	tuic)
 		if [ "$_local" == "2" ]; then
-			gen_config_file $LOCAL_SERVER $type 4 $local_port
-			ln_start_bin $(first_type tuic-client) tuic-client --config $local_config_file
-			echolog "Global Socks5:$($(first_type tuic-client) --version) Started!"
+			local mihomo_bin="$(first_type mihomo)"
+			local instance_key="${LOCAL_SERVER}-local"
+			[ -x "$mihomo_bin" ] || {
+				echolog "Global_Socks5:Mihomo 内核不存在，请确认 /usr/bin/mihomo 或 /usr/libexec/mihomo 可执行。"
+				return 1
+			}
+			prepare_tuic_runtime_config "$LOCAL_SERVER" "$local_port" "$local_port" "$instance_key" "socks" || return 1
+			local tuic_workdir="$(get_tuic_workdir "$instance_key")"
+			ln_start_bin "$mihomo_bin" tuic-local -d "$tuic_workdir" -f "$tuic_workdir/config.yaml"
+			echolog "Global_Socks5:Mihomo (TUIC) Started!"
 		fi
 		;;
 		shadowtls)
@@ -1262,10 +1300,10 @@ get_udp_relay_mode() {
 	ss|ssr|hysteria2)
 		echo "native"
 		;;
-	clash)
+	clash|tuic)
 		echo "native"
 		;;
-	trojan|tuic|shadowtls|socks5)
+	trojan|shadowtls|socks5)
 		echo "split"
 		;;
 	naiveproxy)
@@ -1375,17 +1413,19 @@ Start_Run() {
 		echolog "Main node:$($(first_type hysteria) version | grep Version | awk '{print "Hysteria2: " $2}') Started!"
 		;;
 	tuic)
-		local PARAM
-		[ $mode == "tcp" ] && PARAM="-T" || PARAM=""
-		gen_config_file $GLOBAL_SERVER $type 1 $tmp_tcp_local_port
-		ln_start_bin $(first_type tuic-client) tuic-client --config $tcp_config_file
-		ln_start_bin $(first_type ipt2socks) ipt2socks "$PARAM" -R -b 0.0.0.0 -4 -s 127.0.0.1 -p $tmp_tcp_local_port -l $tcp_port
-		if [ -n $socks_port ] && [ $GLOBAL_SERVER == $LOCAL_SERVER ]; then #start a new tuic instance
-			gen_config_file $GLOBAL_SERVER $type 4 $socks_port
-			ln_start_bin $(first_type tuic-client) tuic-client --config $local_config_file
-			echolog "Global Socks5:$($(first_type tuic-client) --version) Started!"
+		local mihomo_bin="$(first_type mihomo)"
+		local tuic_socks_port=0
+		[ -x "$mihomo_bin" ] || {
+			echolog "Main node:Mihomo 内核不存在，请确认 /usr/bin/mihomo 或 /usr/libexec/mihomo 可执行。"
+			return 1
+		}
+		if [ "$_local" = "1" ] && [ "$LOCAL_SERVER" = "$GLOBAL_SERVER" ]; then
+			tuic_socks_port=$(uci_get_by_type socks5_proxy local_port 1080)
 		fi
-		echolog "Main node:$($(first_type tuic-client) --version) Started!"
+		prepare_tuic_runtime_config "$GLOBAL_SERVER" "$tcp_port" "$tuic_socks_port" "$GLOBAL_SERVER" "redir" || return 1
+		local tuic_workdir="$(get_tuic_workdir "$GLOBAL_SERVER")"
+		ln_start_bin "$mihomo_bin" ssr-retcp -d "$tuic_workdir" -f "$tuic_workdir/config.yaml"
+		echolog "Main node:Mihomo (TUIC) Started!"
 		;;
 		shadowtls)
 			if [ -z "$socks_port" ]; then
@@ -1507,7 +1547,7 @@ load_config() {
 			_local="1"
 			LOCAL_SERVER=$GLOBAL_SERVER
 			local_config_file=$TMP_PATH/tcp-udp-ssr-local.json
-			if [ "$(uci_get_by_name $GLOBAL_SERVER type)" != "clash" ]; then
+			if [ "$(uci_get_by_name $GLOBAL_SERVER type)" != "clash" ] && [ "$(uci_get_by_name $GLOBAL_SERVER type)" != "tuic" ]; then
 				start_local
 			fi
 			local_enable=0
@@ -1659,8 +1699,8 @@ start_server() {
 }
 
 start_switch() {
-	if [ "$(uci_get_by_name $GLOBAL_SERVER type)" = "clash" ]; then
-		echolog "提示：Clash 总节点不启用 SSR Plus 自动切换逻辑。"
+	if [ "$(uci_get_by_name $GLOBAL_SERVER type)" = "clash" ] || [ "$(uci_get_by_name $GLOBAL_SERVER type)" = "tuic" ]; then
+		echolog "提示：Mihomo 托管节点不启用 SSR Plus 自动切换逻辑。"
 		return 0
 	fi
 	if [ "$(uci_get_by_type global enable_switch 0)" == "1" ]; then

@@ -18,7 +18,6 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Http_Proxy \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Mihomo \
-	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Tuic_Client \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadow_TLS \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Kcptun \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy \
@@ -45,7 +44,7 @@ LUCI_DEPENDS:= \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_DNSPROXY:dnsproxy \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_MosDNS:mosdns \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria:hysteria \
-	+PACKAGE_$(PKG_NAME)_INCLUDE_Tuic_Client:tuic-client \
+	+PACKAGE_$(PKG_NAME)_INCLUDE_Mihomo:mihomo \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadow_TLS:shadow-tls \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Kcptun:kcptun-client \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy:naiveproxy \
@@ -164,13 +163,6 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_Mihomo
 	select PACKAGE_v2ray-geosite
 	depends on aarch64||arm||i386||loongarch64||riscv64||x86_64
 	default y if aarch64||arm||i386||loongarch64||riscv64||x86_64
-
-config PACKAGE_$(PKG_NAME)_INCLUDE_Tuic_Client
-	bool "Include Tuic-Client"
-	select PACKAGE_$(PKG_NAME)_INCLUDE_ChinaDNS_NG
-	depends on aarch64||arm||i386||x86_64
-	depends on !(TARGET_x86_geode||TARGET_x86_legacy)
-	default n
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_Shadow_TLS
 	bool "Include Shadow-TLS"

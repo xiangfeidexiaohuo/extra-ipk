@@ -1,12 +1,15 @@
 #!/usr/bin/lua
 
 require "nixio.fs"
+require "luci.model.uci"
 
 local ok_lyaml, lyaml = pcall(require, "lyaml")
 if not ok_lyaml then
 	io.stderr:write("lyaml_not_found\n")
 	os.exit(2)
 end
+
+local uci = require "luci.model.uci".cursor()
 
 local function read_file(path)
 	local data = nixio.fs.readfile(path)
@@ -260,6 +263,142 @@ local function merge(raw_path, overlay_path, output_path)
 	return true
 end
 
+local function bool_enabled(value)
+	return value == "1" or value == 1 or value == true or value == "true"
+end
+
+local function split_csv(value)
+	local items = {}
+	for part in tostring(value or ""):gmatch("[^,%s]+") do
+		items[#items + 1] = part
+	end
+	return items
+end
+
+local function get_server_field(sid, option, default)
+	local value = uci:get("shadowsocksr", sid, option)
+	if value == nil or value == "" then
+		return default
+	end
+	return value
+end
+
+local function get_filter_aaaa()
+	local value = uci:get_first("shadowsocksr", "global", "filter_aaaa", "1")
+	if value == nil or value == "" then
+		value = uci:get_first("shadowsocksr", "global", "mosdns_ipv6", "1")
+	end
+	return value
+end
+
+local function build_tuic_runtime_doc(sid, local_port, socks_port, mode)
+	local server = get_server_field(sid, "server", "")
+	local server_port = tonumber(get_server_field(sid, "server_port", "0")) or 0
+	local tuic_ip = get_server_field(sid, "tuic_ip", "")
+	local tls_host = get_server_field(sid, "tls_host", "")
+	local ipstack_prefer = get_server_field(sid, "ipstack_prefer", "")
+	local dns_mode = uci:get_first("shadowsocksr", "global", "pdnsd_enable", "0")
+
+	local proxy = {
+		name = sid,
+		type = "tuic",
+		server = server,
+		port = server_port,
+		uuid = get_server_field(sid, "tuic_uuid", ""),
+		password = get_server_field(sid, "tuic_passwd", ""),
+		["udp-relay-mode"] = get_server_field(sid, "udp_relay_mode", "native"),
+		["congestion-controller"] = get_server_field(sid, "congestion_control", "cubic"),
+		["skip-cert-verify"] = bool_enabled(get_server_field(sid, "insecure", "0")),
+		["disable-sni"] = bool_enabled(get_server_field(sid, "disable_sni", "0")),
+		["reduce-rtt"] = bool_enabled(get_server_field(sid, "zero_rtt_handshake", "0"))
+	}
+
+	if tuic_ip ~= "" then
+		proxy.ip = tuic_ip
+	end
+	if tls_host ~= "" then
+		proxy.sni = tls_host
+	end
+
+	local alpn = split_csv(get_server_field(sid, "tuic_alpn", ""))
+	if #alpn > 0 then
+		proxy.alpn = alpn
+	end
+
+	local heartbeat = tonumber(get_server_field(sid, "heartbeat", "0"))
+	if heartbeat and heartbeat > 0 then
+		proxy["heartbeat-interval"] = heartbeat * 1000
+	end
+
+	local timeout = tonumber(get_server_field(sid, "timeout", "0"))
+	if timeout and timeout > 0 then
+		proxy["request-timeout"] = timeout * 1000
+	end
+
+	local max_udp_packet_size = tonumber(get_server_field(sid, "tuic_max_package_size", "0"))
+	if max_udp_packet_size and max_udp_packet_size > 0 then
+		proxy["max-udp-relay-packet-size"] = max_udp_packet_size
+	end
+
+	if ipstack_prefer ~= "" then
+		proxy["ip-version"] = ipstack_prefer == "v6first" and "ipv6-prefer" or "ipv4-prefer"
+	end
+
+	local listen_port = tonumber(local_port)
+	local socks_listen = tonumber(socks_port)
+
+	local doc = {
+		["allow-lan"] = true,
+		["bind-address"] = "0.0.0.0",
+		mode = "rule",
+		["log-level"] = "silent",
+		["find-process-mode"] = "off",
+		["unified-delay"] = true,
+		["tcp-concurrent"] = true,
+		["routing-mark"] = 255,
+		proxies = { proxy },
+		["proxy-groups"] = {
+			{
+				name = "PROXY",
+				type = "select",
+				proxies = { sid }
+			}
+		},
+		rules = { "MATCH,PROXY" },
+		tun = { enable = false },
+		profile = { ["store-selected"] = true },
+		dns = {
+			enable = dns_mode == "7",
+			["enhanced-mode"] = "redir-host",
+			listen = "127.0.0.1:5335",
+			ipv6 = get_filter_aaaa() ~= "1"
+		}
+	}
+
+	if mode == "socks" then
+		doc["socks-port"] = listen_port
+	else
+		doc["redir-port"] = listen_port
+		doc["tproxy-port"] = listen_port
+		if socks_listen and socks_listen > 0 then
+			doc["socks-port"] = socks_listen
+		end
+	end
+
+	return doc
+end
+
+local function generate_tuic_runtime(sid, output_path, local_port, socks_port, mode)
+	local doc = build_tuic_runtime_doc(sid, local_port, socks_port, mode)
+	local ok, rendered = pcall(lyaml.dump, { doc })
+	if not ok or not rendered then
+		io.stderr:write("dump_failed\n")
+		return false
+	end
+	write_file(output_path, rendered)
+	return true
+end
+
 local action = arg[1]
 if action == "validate" then
 	os.exit(validate(arg[2]) and 0 or 1)
@@ -269,7 +408,9 @@ elseif action == "prepare" then
 	os.exit(prepare(arg[2], arg[3]) and 0 or 1)
 elseif action == "merge" then
 	os.exit(merge(arg[2], arg[3], arg[4]) and 0 or 1)
+elseif action == "tuic" then
+	os.exit(generate_tuic_runtime(arg[2], arg[3], arg[4], arg[5], arg[6]) and 0 or 1)
 else
-	io.stderr:write("usage: clash_yaml.lua validate <yaml> | filter <yaml> <words> | prepare <input> <output> | merge <raw> <overlay> <output>\n")
+	io.stderr:write("usage: clash_yaml.lua validate <yaml> | filter <yaml> <words> | prepare <input> <output> | merge <raw> <overlay> <output> | tuic <sid> <output> <local_port> [socks_port] [mode]\n")
 	os.exit(1)
 end

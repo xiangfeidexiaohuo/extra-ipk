@@ -39,6 +39,7 @@ start_probe_socks() {
 
 	server_type="$(uci_get_by_name "$sid" type)"
 	[ "$server_type" = "clash" ] && return 1
+	[ "$server_type" = "tuic" ] && return 1
 	[ "$server_type" = "socks5" ] && return 1
 
 	cleanup_probe_socks
@@ -95,6 +96,7 @@ check_proxy_via_socks() {
 test_proxy() {
 	local sid="$1"
 	[ "$(uci_get_by_name "$sid" type)" = "clash" ] && return 1
+	[ "$(uci_get_by_name "$sid" type)" = "tuic" ] && return 1
 	start_probe_socks "$sid" || {
 		cleanup_probe_socks
 		return 1
@@ -109,6 +111,7 @@ search_proxy() {
 	local sid="$1"
 	[ "$(uci_get_by_name "$sid" switch_enable 0)" = "1" ] || return 1
 	[ "$(uci_get_by_name "$sid" type)" = "clash" ] && return 1
+	[ "$(uci_get_by_name "$sid" type)" = "tuic" ] && return 1
 	[ "$sid" = "$CURRENT_SERVER" ] && return 1
 	[ "$ENABLE_SERVER" != "nil" ] && return 0
 
@@ -150,7 +153,12 @@ run_once() {
 	DEFAULT_SERVER="$(uci_get_by_type global global_server)"
 	[ "$DEFAULT_SERVER" = "nil" ] && return 0
 	[ "$(uci_get_by_name "$DEFAULT_SERVER" type)" = "clash" ] && {
-		echolog "提示：Clash 总节点不启用 SSR Plus 自动切换逻辑。"
+		echolog "提示：Mihomo 托管节点不启用 SSR Plus 自动切换逻辑。"
+		cleanup_probe_socks
+		return 0
+	}
+	[ "$(uci_get_by_name "$DEFAULT_SERVER" type)" = "tuic" ] && {
+		echolog "提示：Mihomo 托管节点不启用 SSR Plus 自动切换逻辑。"
 		cleanup_probe_socks
 		return 0
 	}
