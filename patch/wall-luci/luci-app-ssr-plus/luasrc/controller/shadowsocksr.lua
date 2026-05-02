@@ -81,6 +81,11 @@ local function urlencode(str)
 	end)
 end
 
+local function is_ipv6_address(addr)
+	addr = tostring(addr or "")
+	return addr ~= "" and addr:find(":", 1, true) ~= nil
+end
+
 local function get_clash_secret(sid)
 	return sid .. "_ssrplus_clash"
 end
@@ -855,15 +860,18 @@ function check_port()
 		end
 
 		-- 临时加入 set
+		local is_ipv6 = is_ipv6_address(s.server)
 		local iret = false
-		if use_nft then
-			iret = luci.sys.call("nft add element inet ss_spec ss_spec_wan_ac { " .. s.server .. " } 2>/dev/null") == 0
-		else
-			iret = luci.sys.call("ipset add ss_spec_wan_ac " .. s.server .. " 2>/dev/null") == 0
+		if not is_ipv6 then
+			if use_nft then
+				iret = luci.sys.call("nft add element inet ss_spec ss_spec_wan_ac { " .. s.server .. " } 2>/dev/null") == 0
+			else
+				iret = luci.sys.call("ipset add ss_spec_wan_ac " .. s.server .. " 2>/dev/null") == 0
+			end
 		end
 
 		-- TCP 测试
-		local socket = nixio.socket("inet", "stream")
+		local socket = nixio.socket(is_ipv6 and "inet6" or "inet", "stream")
 		socket:setopt("socket", "rcvtimeo", 3)
 		socket:setopt("socket", "sndtimeo", 3)
 		local ret = socket:connect(s.server, s.server_port)

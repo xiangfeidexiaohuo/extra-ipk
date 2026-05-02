@@ -439,7 +439,7 @@ ipset_iptables() {
 	$IPT -I SS_SPEC_WAN_AC -m mark --mark 255 -j RETURN
 
 	$IPT -I SS_SPEC_WAN_AC -p tcp --dport 53 -d 127.0.0.0/8 -j RETURN
-	$IPT -I SS_SPEC_WAN_AC -p tcp ! --dport 53 -d "$server" -j RETURN
+	[ -n "$server" ] && $IPT -I SS_SPEC_WAN_AC -p tcp ! --dport 53 -d "$server" -j RETURN
 
 	ipset -N gmlan hash:net 2>/dev/null
 	for ip in $LAN_GM_IP; do ipset -! add gmlan "$ip"; done
@@ -1032,8 +1032,8 @@ tp_rule_iptables() {
 	do
 		$ipt -A SS_SPEC_TPROXY -p udp -d "$net" -j RETURN
 	done
-	$ipt -A SS_SPEC_TPROXY -p udp ! --dport 53 -d "$SERVER" -j RETURN
-	[ "$server" != "$SERVER" ] && ipset -! add whitelist "$SERVER"
+	[ -n "$SERVER" ] && $ipt -A SS_SPEC_TPROXY -p udp ! --dport 53 -d "$SERVER" -j RETURN
+	[ -n "$SERVER" ] && [ "$server" != "$SERVER" ] && ipset -! add whitelist "$SERVER"
 	if [ -f "${xhttp_ip:=/etc/ssrplus/xhttp_address.txt}" ]; then
 		while IFS= read -r ip; do
 			[ -n "$ip" ] && ipset add whitelist "$ip" -exist
@@ -1640,7 +1640,7 @@ runmode_change() {
 }
 
 # Main process
-if [ -n "$server" ] && [ -n "$local_port" ]; then
+if [ -n "$local_port" ]; then
 	if ! echo "$local_port" | grep -qE '^[0-9]+$'; then
 		loger 3 "Invalid local port: $local_port"
 		exit 1
@@ -1652,7 +1652,6 @@ if [ -n "$server" ] && [ -n "$local_port" ]; then
 		LOCAL_PORT=$local_port
 		;;
 	2)
-		: ${SERVER:?"You must assign an ip for the udp relay server."}
 		: ${LOCAL_PORT:?"You must assign a port for the udp relay server."}
 		;;
 	esac

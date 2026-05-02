@@ -418,15 +418,17 @@ get_host_ip() {
 		echo ""
 		return
 	}
-	local ip=$host
-	if [ -z "$(echo $host | grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}")" ]; then
-		if [ "$host" == "${host#*:[0-9a-fA-F]}" ]; then
-			ip=$(resolveip -4 -t 3 $host | awk 'NR==1{print}')
-			[ -z "$ip" ] && ip=$(curl -sSL "http://119.29.29.29/d?dn=$host" | awk -F ';' '{print $1}')
-		fi
+	host="${host#\[}"
+	host="${host%\]}"
+	local ip=""
+	if echo "$host" | grep -Eq '^([0-9]{1,3}\.){3}[0-9]{1,3}$'; then
+		ip="$host"
+	elif ! echo "$host" | grep -q ':'; then
+		ip=$(resolveip -4 -t 3 "$host" | awk 'NR==1{print}')
+		[ -z "$ip" ] && ip=$(curl -sSL "http://119.29.29.29/d?dn=$host" | awk -F ';' '{print $1}')
 	fi
 	[ -z "$ip" ] || uci_set_by_name $1 ip $ip
-	[ -n "$ip" ] || ip="$(uci_get_by_name $1 ip "ERROR")"
+	[ -n "$ip" ] || ip=""
 
 	local chinadns="$(uci_get_by_type global chinadns_forward)"
 	if [ -n "$chinadns" ] && [ "$ip" != "$host" ]; then

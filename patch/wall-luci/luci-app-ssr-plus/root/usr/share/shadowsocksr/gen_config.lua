@@ -112,6 +112,22 @@ local function cleanEmptyTables(t)
 	return next(t) and t or nil
 end
 
+local function format_host(host)
+	host = tostring(host or "")
+	if host ~= "" and host:find(":", 1, true) and not host:match("^%[.*%]$") then
+		return "[" .. host .. "]"
+	end
+	return host
+end
+
+local function format_host_port(host, port)
+	host = format_host(host)
+	if port == nil or port == "" then
+		return host
+	end
+	return host .. ":" .. tostring(port)
+end
+
 -- 确保正确判断程序是否存在
 local function is_finded(e)
 	return luci.sys.exec(string.format('type -t -p "%s" -p "/usr/libexec/%s" 2>/dev/null', e, e)) ~= ""
@@ -218,7 +234,7 @@ function wireguard()
 			{
 				publicKey = server.peer_pubkey,
 				preSharedKey = server.preshared_key,
-				endpoint = server.server .. ":" .. server.server_port,
+				endpoint = format_host_port(server.server, server.server_port),
 				keepAlive = tonumber(server.keepaliveperiod),
 				allowedIPs = (server.allowedips) or nil,
 			}
@@ -788,7 +804,7 @@ local trojan = {
 	}
 }
 local naiveproxy = {
-	proxy = (server.username and server.password and server.server and server.server_port) and "https://" .. server.username .. ":" .. server.password .. "@" .. server.server .. ":" .. server.server_port,
+	proxy = (server.username and server.password and server.server and server.server_port) and "https://" .. server.username .. ":" .. server.password .. "@" .. format_host_port(server.server, server.server_port),
 	listen = (proto == "redir") and "redir" .. "://0.0.0.0:" .. tonumber(local_port) or "socks" .. "://0.0.0.0:" .. tonumber(local_port),
 	["insecure-concurrency"] = tonumber(server.concurrency) or 1
 }
@@ -809,16 +825,16 @@ local hysteria2 = {
 		server.server_port and 
 		(
 			server.port_range and 
-			(server.server .. ":" .. server.server_port .. "," .. string.gsub(server.port_range, ":", "-")) 
+			(format_host_port(server.server, server.server_port) .. "," .. string.gsub(server.port_range, ":", "-")) 
 			or 
-			(server.server .. ":" .. server.server_port)
+			(format_host_port(server.server, server.server_port))
 		) 
 		or 
 		(
 			server.port_range and 
-			server.server .. ":" .. string.gsub(server.port_range, ":", "-") 
+			format_host(server.server) .. ":" .. string.gsub(server.port_range, ":", "-") 
 			or 
-			server.server and server.server .. ":443"
+			server.server and format_host_port(server.server, "443")
 		)
 	),
 	bandwidth = (server.uplink_capacity or server.downlink_capacity) and {
@@ -917,7 +933,7 @@ local hysteria2 = {
 }
 local shadowtls = {
 	client = {
-		server_addr = server.server_port and server.server .. ":" .. server.server_port or nil,
+		server_addr = server.server_port and format_host_port(server.server, server.server_port) or nil,
 		listen = "127.0.0.1:" .. tonumber(local_port),
 		tls_names = server.shadowtls_sni,
 		password = server.password
@@ -996,7 +1012,7 @@ local chain_vmess = {
 }
 local tuic = {
 	relay = {
-		server = server.server_port and server.server .. ":" .. server.server_port,
+		server = server.server_port and format_host_port(server.server, server.server_port),
 		ip = server.tuic_ip,
 		uuid = server.tuic_uuid,
 		password = server.tuic_passwd,
