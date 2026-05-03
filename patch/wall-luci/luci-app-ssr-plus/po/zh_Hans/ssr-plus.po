@@ -17,11 +17,6 @@ msgstr ""
 msgid "%s Node Use Type"
 msgstr "%s 节点使用类型"
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client-config.lua:409
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/servers.lua:227
-msgid "%s Node Use Version"
-msgstr "%s 节点使用版本"
-
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/server.lua:103
 msgid "0"
 msgstr ""
@@ -2136,11 +2131,6 @@ msgstr "正在保存新的顺序…"
 msgid "Select DNS parse Mode"
 msgstr "选择 DNS 解析方式"
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client-config.lua:410
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/servers.lua:228
-msgid "Selection ShadowSocks Node Use Version."
-msgstr "选择 ShadowSocks 节点使用版本。"
-
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client-config.lua:1593
 msgid "Self-signed Certificate"
 msgstr "自签证书"
@@ -2211,11 +2201,6 @@ msgstr "代理链类型"
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/server-config.lua:89
 msgid "ShadowSocks"
 msgstr ""
-
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client-config.lua:415
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/servers.lua:101
-msgid "ShadowSocks-libev Version"
-msgstr "ShadowSocks-libev 版本"
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client-config.lua:412
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client-config.lua:749

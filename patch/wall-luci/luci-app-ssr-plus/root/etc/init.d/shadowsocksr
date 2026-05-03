@@ -933,16 +933,16 @@ gen_config_file() { #server1 type2 code3 local_port4 socks_port5 chain6 threads5
 start_udp() {
 	local udp_relay_server_type=$(uci_get_by_name $UDP_RELAY_SERVER type)
 	local type=$udp_relay_server_type
-	if [ "$udp_relay_server_type" = "ss-rust" ] || [ "$udp_relay_server_type" = "ss-libev" ]; then
+	if [ "$udp_relay_server_type" = "ss-rust" ]; then
 		type="ss"
 	fi
 	redir_udp=1
 	case "$type" in
 	ss | ssr)
 		gen_config_file $UDP_RELAY_SERVER $type 2 $tmp_udp_port
-		if [ "$udp_relay_server_type" = "ss-libev" ] || [ "$udp_relay_server_type" = "ssr" ]; then
+		if [ "$udp_relay_server_type" = "ssr" ]; then
 			ss_program="$(first_type ${type}-redir)"
-		elif [ "$udp_relay_server_type" = "ss-rust" ]; then
+		elif [ "$udp_relay_server_type" = "ss-rust" ] || [ "$udp_relay_server_type" = "ss" ]; then
 			ss_program="$(first_type ${type}local)"
 		fi
 		echolog "$(get_name $type) program is: $ss_program"
@@ -1016,15 +1016,15 @@ start_local() {
 	local local_port="${1:-$(uci_get_by_type socks5_proxy local_port)}"
 	local local_server_type=$(uci_get_by_name $LOCAL_SERVER type)
 	local type=$local_server_type
-	if [ "$local_server_type" = "ss-rust" ] || [ "$local_server_type" = "ss-libev" ]; then
+	if [ "$local_server_type" = "ss-rust" ]; then
 		type="ss"
 	fi
 	case "$type" in
 	ss | ssr)
 		gen_config_file $LOCAL_SERVER $type 4 $local_port
-		if [ "$local_server_type" = "ss-libev" ] || [ "$local_server_type" = "ssr" ]; then
+		if [ "$local_server_type" = "ssr" ]; then
 			ss_program="$(first_type ${type}-local)"
-		elif [ "$local_server_type" = "ss-rust" ]; then
+		elif [ "$local_server_type" = "ss-rust" ] || [ "$local_server_type" = "ss" ]; then
 			ss_program="$(first_type ${type}local)"
 		fi
 		echolog "$(get_name $type) program is: $ss_program"
@@ -1252,7 +1252,7 @@ get_udp_relay_mode() {
 	local socks_ver
 
 	type=$(uci_get_by_name "$node" type)
-	[ "$type" = "ss-rust" ] || [ "$type" = "ss-libev" ] && type="ss"
+	[ "$type" = "ss-rust" ] && type="ss"
 
 	case "$type" in
 	ss|ssr|hysteria2)
@@ -1325,15 +1325,15 @@ Start_Run() {
 	local tcp_port=$(get_default_node_local_port)
 	local global_server_type=$(uci_get_by_name $GLOBAL_SERVER type)
 	local type=$global_server_type
-	if [ "$global_server_type" = "ss-rust" ] || [ "$global_server_type" = "ss-libev" ]; then
+	if [ "$global_server_type" = "ss-rust" ]; then
 		type="ss"
 	fi
 	case "$type" in
 	ss | ssr)
 		gen_config_file $GLOBAL_SERVER $type 1 $tcp_port
-		if [ "$global_server_type" = "ss-libev" ] || [ "$global_server_type" = "ssr" ]; then
+		if [ "$global_server_type" = "ssr" ]; then
 			ss_program="$(first_type ${type}-redir)"
-		elif [ "$global_server_type" = "ss-rust" ]; then
+		elif [ "$global_server_type" = "ss-rust" ] || [ "$global_server_type" = "ss" ]; then
 			ss_program="$(first_type ${type}local)"
 		fi
 		echolog "$(get_name $type) program is: $ss_program"
@@ -1563,19 +1563,19 @@ start_server() {
 				fi
 			fi
 		fi
-		local node_type=$(uci_get_by_name $1 type)
-		local type=$node_type
-		if [ "$node_type" = "ss-rust" ] || [ "$node_type" = "ss-libev" ]; then
-			type="ss"
-		fi
-		case "$type" in
-		ss | ssr)
-			gen_service_file ${type} $1 $TMP_PATH/ssr-server$server_count.json
-			if [ "$node_type" = "ss-libev" ] || [ "$node_type" = "ssr" ]; then
-				ss_program="$(first_type ${type}-server)"
-			elif [ "$node_type" = "ss-rust" ]; then
-				ss_program="$(first_type ${type}server)"
+			local node_type=$(uci_get_by_name $1 type)
+			local type=$node_type
+			if [ "$node_type" = "ss-rust" ]; then
+				type="ss"
 			fi
+			case "$type" in
+			ss | ssr)
+				gen_service_file ${type} $1 $TMP_PATH/ssr-server$server_count.json
+				if [ "$node_type" = "ssr" ]; then
+					ss_program="$(first_type ${type}-server)"
+				elif [ "$node_type" = "ss-rust" ] || [ "$node_type" = "ss" ]; then
+					ss_program="$(first_type ${type}server)"
+				fi
 			# 获取当前软链接指向的执行文件路径
 			old_ss_program=$(readlink -f "$TMP_PATH/bin/${type}-server" 2>/dev/null)
 			# **当新旧执行文件路径不同时，删除旧链接**

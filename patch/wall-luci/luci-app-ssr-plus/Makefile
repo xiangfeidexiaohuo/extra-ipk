@@ -21,10 +21,8 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Kcptun \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_NONE_Client \
-	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Client \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_NONE_Server \
-	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Server \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Server \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Simple_Obfs \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_V2ray_Plugin \
@@ -36,16 +34,13 @@ LUCI_PKGARCH:=all
 LUCI_DEPENDS:= \
 	+libuci-lua +lua +luci-compat +coreutils +coreutils-base64 +dns2tcp +dnsmasq-full \
 	+jq +ip-full +lua-neturl +libuci-lua +microsocks +ipt2socks \
-	+resolveip +shadowsocksr-libev-ssr-check +curl +nping +unzip +xz-utils \
+	+resolveip +curl +nping +unzip +xz-utils \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_ChinaDNS_NG:chinadns-ng \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_MosDNS:mosdns \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria:hysteria \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadow_TLS:shadow-tls \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Kcptun:kcptun-client \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy:naiveproxy \
-	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client:shadowsocks-libev-ss-local \
-	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client:shadowsocks-libev-ss-redir \
-	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Server:shadowsocks-libev-ss-server \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Client:shadowsocks-rust-sslocal \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Server:shadowsocks-rust-ssserver \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Simple_Obfs:simple-obfs-client \
@@ -86,13 +81,10 @@ endchoice
 choice
 	prompt "Shadowsocks Client Selection"
 	default PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Client if aarch64 || loongarch64 || x86_64
-	default PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client
+	default PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_NONE_Client
 
 	config PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_NONE_Client
 	bool "None"
-
-	config PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client
-	bool "Shadowsocks-libev"
 
 	config PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Client
 	bool "Shadowsocks-rust"
@@ -106,9 +98,6 @@ choice
 
 	config PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_NONE_Server
 	bool "None"
-
-	config PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Server
-	bool "Shadowsocks-libev"
 
 	config PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Server
 	bool "Shadowsocks-rust"
