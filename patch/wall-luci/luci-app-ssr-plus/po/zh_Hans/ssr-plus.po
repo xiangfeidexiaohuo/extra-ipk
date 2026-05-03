@@ -1935,6 +1935,9 @@ msgstr "正在更新，请稍候..."
 msgid "Reload YAML"
 msgstr "重载 YAML"
 
+msgid "Custom Client Proxies Rules"
+msgstr "自定义客户端代理规则"
+
 msgid "Reloading YAML..."
 msgstr "正在重载 YAML..."
 
@@ -1961,6 +1964,36 @@ msgstr "已清空默认状态！"
 
 msgid "Reset Defaults Failed!"
 msgstr "重置默认值失败！"
+
+msgid "No custom client proxy rules yet."
+msgstr "暂无自定义客户端代理规则。"
+
+msgid "Client"
+msgstr "客户端"
+
+msgid "Policy"
+msgstr "策略"
+
+msgid "Remarks"
+msgstr "备注"
+
+msgid "Saving..."
+msgstr "保存中..."
+
+msgid "Custom client proxy rules saved and applied."
+msgstr "自定义客户端代理规则已保存并生效。"
+
+msgid "Custom client proxy rules saved."
+msgstr "自定义客户端代理规则已保存。"
+
+msgid "Failed to save custom client proxy rules."
+msgstr "保存自定义客户端代理规则失败。"
+
+msgid "Define per-client Mihomo proxy targets. Rules are injected as SRC-IP-CIDR entries before the original Clash rules."
+msgstr "为每个客户端指定 Mihomo 代理目标。规则会以 SRC-IP-CIDR 形式注入到原始 Clash 规则之前。"
+
+msgid "Client supports manual IP or IP/CIDR input."
+msgstr "客户端支持手动输入 IP 或 IP/CIDR。"
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/servers.lua:134
 msgid "Regular update (Hour)"
