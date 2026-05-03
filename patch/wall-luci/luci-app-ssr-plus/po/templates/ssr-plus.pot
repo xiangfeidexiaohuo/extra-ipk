@@ -1830,6 +1830,39 @@ msgstr ""
 msgid "Client supports manual IP or IP/CIDR input."
 msgstr ""
 
+msgid "Export Client Rules"
+msgstr ""
+
+msgid "Import Client Rules"
+msgstr ""
+
+msgid "Client rules exported to CSV text."
+msgstr ""
+
+msgid "Client rules imported from CSV text. Click Save to apply."
+msgstr ""
+
+msgid "Client rules exported to CSV file."
+msgstr ""
+
+msgid "Client rules imported from CSV file. Click Save to apply."
+msgstr ""
+
+msgid "Clear All Rules"
+msgstr ""
+
+msgid "Clear all custom client proxy rules and restore empty state?"
+msgstr ""
+
+msgid "All client proxy rules cleared and applied."
+msgstr ""
+
+msgid "All client proxy rules cleared."
+msgstr ""
+
+msgid "Failed to clear all client proxy rules."
+msgstr ""
+
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/servers.lua:134
 msgid "Regular update (Hour)"
 msgstr ""

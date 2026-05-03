@@ -484,6 +484,7 @@ function index()
 	entry({"admin", "services", "shadowsocksr", "clash_reset_defaults"}, call("clash_reset_defaults")).leaf = true
 	entry({"admin", "services", "shadowsocksr", "clash_client_policies"}, call("clash_client_policies")).leaf = true
 	entry({"admin", "services", "shadowsocksr", "clash_client_rule_save"}, call("clash_client_rule_save")).leaf = true
+	entry({"admin", "services", "shadowsocksr", "clash_client_rule_clear"}, call("clash_client_rule_clear")).leaf = true
 	--[[Backup]]
 	entry({"admin", "services", "shadowsocksr", "backup"}, call("create_backup")).leaf = true
 end
@@ -933,6 +934,30 @@ function clash_client_rule_save()
 		count = #rows,
 		reapplied = reapplied,
 		rules = read_clash_client_rules()
+	})
+end
+
+function clash_client_rule_clear()
+	local sid = luci.http.formvalue("sid")
+
+	uci:delete_all("shadowsocksr", "clash_client_group")
+	uci:save("shadowsocksr")
+	uci:commit("shadowsocksr")
+
+	local current_sid = uci:get_first("shadowsocksr", "global", "global_server")
+	local reapplied = false
+	if sid and sid ~= "" and uci:get("shadowsocksr", sid) == "servers"
+		and uci:get("shadowsocksr", sid, "type") == "clash"
+		and current_sid == sid then
+		luci.sys.call("/etc/init.d/shadowsocksr restart >/dev/null 2>&1 &")
+		reapplied = true
+	end
+
+	luci.http.prepare_content("application/json")
+	luci.http.write_json({
+		success = true,
+		reapplied = reapplied,
+		rules = {}
 	})
 end
 
