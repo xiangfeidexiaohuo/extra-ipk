@@ -14,7 +14,8 @@ local SERVER_DETECT_CACHE = "/tmp/ssrplus_server_detect.json"
 local SERVER_DETECT_LOCK = "/tmp/ssrplus_server_detect.lock"
 local SUPPORTED_COMPONENTS = {
 	xray = true,
-	mihomo = true
+	mihomo = true,
+	naiveproxy = true
 }
 local SUPPORTED_GEO_COMPONENTS = {
 	country_mmdb = true,
