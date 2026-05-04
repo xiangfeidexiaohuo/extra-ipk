@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Clone Repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@main
 
     - name: Set git
       run : |
@@ -107,15 +107,15 @@ jobs:
   
         git clone https://github.com/fw876/helloworld ./patch/wall/helloworld
         mv ./patch/wall/helloworld/luci-app-ssr-plus ./patch/wall-luci/
-        rm -rf ./patch/wall/helloworld/mosdns
-
-        rm -rf ./patch/wall/helloworld/.github
-        rm -rf ./patch/wall/helloworld/.gitignore
-        rm -rf ./patch/wall/helloworld/LICENSE
-        rm -rf ./patch/wall/helloworld/README.md
-        rm -rf ./patch/wall/helloworld/.git
-
-        mv ./patch/wall/helloworld/* ./patch/wall/
+        mv ./patch/wall/helloworld/dns2socks-rust ./patch/wall/
+        mv ./patch/wall/helloworld/dns2tcp ./patch/wall/
+        mv ./patch/wall/helloworld/dnsproxy ./patch/wall/
+        mv ./patch/wall/helloworld/gn ./patch/wall/
+        mv ./patch/wall/helloworld/lua-neturl ./patch/wall/
+        mv ./patch/wall/helloworld/redsocks2 ./patch/wall/
+        mv ./patch/wall/helloworld/v2ray-core ./patch/wall/
+        mv ./patch/wall/helloworld/v2raya ./patch/wall/
+        mv ./patch/wall/helloworld/mihomo ./patch/wall/
         rm -rf ./patch/wall/helloworld
     
         git clone https://github.com/Openwrt-Passwall/openwrt-passwall ./patch/wall-luci/pass
@@ -126,10 +126,9 @@ jobs:
         rm -rf ./patch/wall-luci/pass2
 
         git clone https://github.com/Openwrt-Passwall/openwrt-passwall-packages ./patch/wall/pass
-        mv ./patch/wall/pass/geoview ./patch/wall/
-        mv ./patch/wall/pass/sing-box ./patch/wall/
-        mv ./patch/wall/pass/trojan-plus ./patch/wall/
-        mv ./patch/wall/pass/v2ray-geodata ./patch/wall/
+        rm -rf ./patch/wall/pass/.github
+        rm -rf ./patch/wall/pass/.git
+        mv ./patch/wall/pass/* ./patch/wall/
         rm -rf ./patch/wall/pass
 
         git clone --depth=1 https://github.com/vernesong/OpenClash.git -b dev
