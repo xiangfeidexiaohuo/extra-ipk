@@ -473,6 +473,7 @@ function index()
 	entry({"admin", "services", "shadowsocksr", "run"}, call("act_status"))
 	entry({"admin", "services", "shadowsocksr", "ping"}, call("act_ping"))
 	entry({"admin", "services", "shadowsocksr", "save_order"}, call("save_order")).leaf = true
+	entry({"admin", "services", "shadowsocksr", "toggle_subscribe_item_enabled"}, call("toggle_subscribe_item_enabled")).leaf = true
 	entry({"admin", "services", "shadowsocksr", "reset"}, call("act_reset"))
 	entry({"admin", "services", "shadowsocksr", "restart"}, call("act_restart"))
 	entry({"admin", "services", "shadowsocksr", "delete"}, call("act_delete"))
@@ -515,6 +516,25 @@ function save_order()
 		ret = (#sids > 0) and 1 or 0,
 		count = #sids
 	})
+end
+
+function toggle_subscribe_item_enabled()
+	local sid = trim(luci.http.formvalue("sid"))
+	local enabled = luci.http.formvalue("enabled") == "1" and "1" or "0"
+
+	if sid == "" or uci:get("shadowsocksr", sid) ~= "server_subscribe_item" then
+		luci.http.status(400, "Bad Request")
+		luci.http.prepare_content("application/json")
+		luci.http.write_json({ ret = 0, error = "invalid_sid" })
+		return
+	end
+
+	uci:set("shadowsocksr", sid, "enabled", enabled)
+	uci:save("shadowsocksr")
+	uci:commit("shadowsocksr")
+
+	luci.http.prepare_content("application/json")
+	luci.http.write_json({ ret = 1, sid = sid, enabled = enabled })
 end
 
 function component_status()
