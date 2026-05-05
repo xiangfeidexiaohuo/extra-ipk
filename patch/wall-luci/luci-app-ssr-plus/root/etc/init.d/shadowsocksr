@@ -853,9 +853,7 @@ start_dns() {
 				sed -i "s,$(printf '%s' "$old_appledns"),$(printf '%s' "$new_appledns"),g" /etc/ssrplus/applechina.conf
 			fi
 		fi
-		echolog "Apple 域名中国大陆 CDN 的 优化规则正在加载。"
 		cp -f /etc/ssrplus/applechina.conf $TMP_DNSMASQ_PATH/
-		echolog "Apple 域名中国大陆 CDN 的 优化规则加载完毕。"
 	fi
 }
 
@@ -1104,6 +1102,17 @@ start_local() {
 			fi
 			ln_start_bin $ss_program ${type}-local -c $local_config_file
 			echolog "Global_Socks5:$(get_name $type) Started!"
+		elif [ "$local_server_type" = "ss" ]; then
+			local mihomo_bin="$(first_type mihomo)"
+			local instance_key="${LOCAL_SERVER}-local"
+			[ -x "$mihomo_bin" ] || {
+				echolog "Global_Socks5:Mihomo 内核不存在，请确认 /usr/bin/mihomo 或 /usr/libexec/mihomo 可执行。"
+				return 1
+			}
+			prepare_ss_mihomo_runtime_config "$LOCAL_SERVER" "$local_port" "$local_port" "$instance_key" "socks" || return 1
+			local ss_workdir="$(get_ss_mihomo_workdir "$instance_key")"
+			ln_start_bin "$mihomo_bin" ss-local -d "$ss_workdir" -f "$ss_workdir/config.yaml"
+			echolog "Global_Socks5:Mihomo (Shadowsocks) Started!"
 		else
 			gen_config_file $LOCAL_SERVER $type 4 $local_port
 			ss_program="$(first_type sslocal)"
@@ -1416,6 +1425,20 @@ Start_Run() {
 				ln_start_bin $ss_program ${type}-redir -c $tcp_config_file
 			done
 			echolog "Main node:$(get_name $type) $threads Threads Started!"
+		elif [ "$global_server_type" = "ss" ]; then
+			local mihomo_bin="$(first_type mihomo)"
+			local ss_socks_port=0
+			[ -x "$mihomo_bin" ] || {
+				echolog "Main node:Mihomo 内核不存在，请确认 /usr/bin/mihomo 或 /usr/libexec/mihomo 可执行。"
+				return 1
+			}
+			if [ "$_local" = "1" ] && [ "$LOCAL_SERVER" = "$GLOBAL_SERVER" ]; then
+				ss_socks_port=$(uci_get_by_type socks5_proxy local_port 1080)
+			fi
+			prepare_ss_mihomo_runtime_config "$GLOBAL_SERVER" "$tcp_port" "$ss_socks_port" "$GLOBAL_SERVER" "redir" || return 1
+			local ss_workdir="$(get_ss_mihomo_workdir "$GLOBAL_SERVER")"
+			ln_start_bin "$mihomo_bin" ssr-retcp -d "$ss_workdir" -f "$ss_workdir/config.yaml"
+			echolog "Main node:Mihomo (Shadowsocks) Started!"
 		else
 			gen_config_file $GLOBAL_SERVER $type 1 $tcp_port
 			ss_program="$(first_type sslocal)"
