@@ -1,25 +1,23 @@
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=xray-core
-PKG_VERSION:=26.4.25
+PKG_NAME:=Xray-core
+PKG_VERSION:=26.5.3
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/XTLS/Xray-core/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=924516ad4e9827cbe53431065cfccbd4febb20006ff4764323a28dbdb9496c35
+PKG_HASH:=99c8899434cc2ba4d5236f641370d9219104e4e4e9734f230e5ef2d95131ec9c
 
 PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 PKG_LICENSE:=MPL-2.0
 PKG_LICENSE_FILES:=LICENSE
 
-PKG_BUILD_DIR:=$(BUILD_DIR)/Xray-core-$(PKG_VERSION)
 PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 PKG_BUILD_FLAGS:=no-mips16
 
 GO_PKG:=github.com/xtls/xray-core
-GO_PKG_LDFLAGS:=-s -w
 GO_PKG_BUILD_PKG:=$(GO_PKG)/main
 GO_PKG_LDFLAGS_X:= \
 	$(GO_PKG)/core.build=OpenWrt \
@@ -28,17 +26,30 @@ GO_PKG_LDFLAGS_X:= \
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
-define Package/xray-core
+define Package/xray/template
   TITLE:=A platform for building proxies to bypass network restrictions
   SECTION:=net
   CATEGORY:=Network
   URL:=https://xtls.github.io
+endef
+
+define Package/xray-core
+  $(call Package/xray/template)
   DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
 endef
 
-define Package/xray-core/description
+define Package/xray/description
   Xray, Penetrates Everything. It helps you to build your own computer network.
   It secures your network connections and thus protects your privacy.
+endef
+
+define Package/xray-core/description
+  $(call Package/xray/description)
+endef
+
+define Package/xray-core/conffiles
+/etc/xray/
+/etc/config/xray
 endef
 
 define Package/xray-core/install
