@@ -101,6 +101,9 @@ msgstr "调试日志"
 msgid "Generate Logs"
 msgstr "生成日志"
 
+msgid "Generated Logs"
+msgstr "日志生成结果"
+
 msgid "Click to Generate"
 msgstr "点击生成"
 
@@ -2040,6 +2043,9 @@ msgstr "点击测试"
 msgid "Connection Test"
 msgstr "连接测试"
 
+msgid "Connection Test Result"
+msgstr "连接测试结果"
+
 msgid "Backup File"
 msgstr "备份文件"
 
@@ -2720,6 +2726,9 @@ msgstr "还原"
 
 msgid "DNS Test"
 msgstr "DNS 测试"
+
+msgid "DNS Test Result"
+msgstr "DNS 测试结果"
 
 msgid "No Response Found!"
 msgstr "结果获取失败！"
