@@ -11,6 +11,14 @@ local socks_port     = arg[4] or "0"
 
 local chain          = arg[5] or "0"
 
+-- trim
+local function trim(text)
+	if not text or text == "" then
+		return ""
+	end
+	return (text:gsub("^%s*(.-)%s*$", "%1"))
+end
+
 -- 辅助函数：拆分字符串（若 luci.util 未加载则定义）
 local function split(str, pat)
 	local t = {}
@@ -657,10 +665,18 @@ Xray.outbounds = {
 						local o = {
 							type = "salamander",
 							settings = server.salamander and {
-								password = server.salamander,
-								packetSize = server.obfs_type == "gecko" and "512-1200" or nil
+								password = server.salamander
 							} or nil
 						}
+						if server.obfs_type == "gecko" then
+							local min = tonumber(server.obfs_MinPacketSize) or 512
+							local max = tonumber(server.obfs_MaxPacketSize) or 1200
+							if min <= 0 or min > max or max > 2048 then
+								min = 512
+								max = 1200
+							end
+							o.settings.packetSize = min .. "-" .. max
+						end
 						udp[#udp+1] = o
 					end
 					if server.hysteria2_realms then
@@ -724,26 +740,11 @@ Xray.outbounds = {
 					local n_maxsplit = xray_fragment.fragment_maxSplit
 					--local domainstr = xray_noise.domainStrategy
 					finalmask.tcp = finalmask.tcp or {}
-
-					-- 辅助函数：将逗号分隔的字符串拆分为数组
-					local function split_to_array(str)
-						if not str or str == "" then return nil end
-						local result = {}
-						for value in string.gmatch(str, "[^,]+") do
-							value = value:gsub("^%s*(.-)%s*$", "%1")  -- 去除首尾空格
-							if value ~= "" then
-								table.insert(result, value)
-							end
-						end
-						return #result > 0 and result or nil
-					end
-
 					-- 构建 fragment settings
 					local fragment_settings = {
 						packets = (n_packets and n_packets ~= "") and n_packets or nil,
 						maxSplit = (n_maxsplit and n_maxsplit ~= "") and n_maxsplit or nil
 					}
-    
 					-- 根据 Xray 版本决定使用旧格式还是新格式
 					if xray_version_val <= 260601 then
 						-- 旧版本：使用 length 和 delay（单个值）
@@ -759,18 +760,30 @@ Xray.outbounds = {
 						end
 					else
 						-- 新版本：使用 lengths 和 delays（数组）
-						-- 拆分逗号分隔的字符串
+						-- 将逗号分隔的字符串拆分为数组
+						local function split_to_array(str)
+							if not str or str == "" then return nil end
+								local result = {}
+								local trimmed = trim(str)
+								if trimmed and trimmed ~= "" then
+									trimmed:gsub("[^,]+", function(w)
+									w = w:gsub("%s+", "")
+									if w ~= "" then
+										result[#result + 1] = w
+									end
+								end)
+							end
+							return #result > 0 and result or nil
+						end
 						local lengths_array = split_to_array(n_length)
 						if lengths_array then
 							fragment_settings.lengths = lengths_array
 						end
-        
 						local delays_array = split_to_array(n_delay)
 						if delays_array then
 							fragment_settings.delays = delays_array
 						end
 					end
-    
 					finalmask.tcp[#finalmask.tcp + 1] = {
 						type = "fragment",
 						settings = fragment_settings
@@ -967,6 +980,9 @@ local hysteria2 = {
 		up = tonumber(server.uplink_capacity) and tonumber(server.uplink_capacity) .. " mbps" or nil,
 		down = tonumber(server.downlink_capacity) and tonumber(server.downlink_capacity) .. " mbps" or nil
 	} or nil,
+	realm = (server.hysteria2_realms and server.hysteria2_realm_stun) and {
+		stunServers = server.hysteria2_realm_stun
+	} or nil,
 	socks5 = (proto:find("tcp") and tonumber(socks_port) and tonumber(socks_port) ~= 0) and {
 		listen = "0.0.0.0:" .. tonumber(socks_port),
 		disableUDP = false
@@ -1008,7 +1024,7 @@ local hysteria2 = {
 	} or nil,
 	obfs = (server.flag_obfs == "1") and {
 		type = server.obfs_type,
-		salamander = { password = server.salamander }
+		[server.obfs_type] = { password = server.salamander }
 	} or nil,
 	quic = (server.flag_quicparam == "1" ) and {
 		initStreamReceiveWindow = (server.initstreamreceivewindow and server.initstreamreceivewindow or nil),
@@ -1057,6 +1073,16 @@ local hysteria2 = {
 	fast_open = (server.fast_open == "1") and true or false,
 	lazy = (server.lazy_mode == "1") and true or false
 }
+if hysteria2.obfs and hysteria2.obfs.type == "gecko" then
+	local min = tonumber(server.obfs_MinPacketSize) or 512
+	local max = tonumber(server.obfs_MaxPacketSize) or 1200
+	if min <= 0 or min > max or max > 2048 then
+        	min = 512
+        	max = 1200
+	end
+	hysteria2.obfs.gecko.minPacketSize = min
+	hysteria2.obfs.gecko.maxPacketSize = max
+end
 local shadowtls = {
 	client = {
 		server_addr = server.server_port and format_host_port(server.server, server.server_port) or nil,
