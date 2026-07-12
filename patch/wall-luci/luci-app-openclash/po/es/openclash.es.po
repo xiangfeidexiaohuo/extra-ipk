@@ -2868,6 +2868,21 @@ msgstr "Edita aquí tus parámetros adicionales"
 msgid "Config Not Found, Switch Config File to"
 msgstr "No se encontró el archivo de configuración; cambiando al archivo de configuración"
 
+msgid "Empty URL"
+msgstr "URL vacía"
+
+msgid "Only HTTP/HTTPS URLs are supported"
+msgstr "Solo se admiten URL HTTP/HTTPS"
+
+msgid "Invalid URL format"
+msgstr "Formato de URL no válido"
+
+msgid "URL missing hostname"
+msgstr "La URL no tiene nombre de host"
+
+msgid "Invalid URL on line"
+msgstr "URL no válida"
+
 msgid "Enable Unified Delay"
 msgstr "Activar cálculo unificado de latencia"
 
@@ -3906,10 +3921,19 @@ msgstr "Sitio web oficial"
 msgid "Login..."
 msgstr "Iniciando sesión..."
 
+msgid "Logout..."
+msgstr "Cerrando sesión..."
+
+msgid "Checkin..."
+msgstr "Registrando..."
+
 msgid "oixCloud Login Successful"
 msgstr "Inicio de sesión en oixCloud exitoso"
 
-msgid "oixCloud Login Faild"
+msgid "Note: oixCloud need a specific core installed, OpenClash will auto download, After the core start, an oixCloud nodes provider will be added, which you can customize as needed"
+msgstr "Nota: oixCloud necesita un núcleo específico instalado, OpenClash lo descargará automáticamente. Tras iniciar el núcleo, se añadirá un proveedor de nodos oixCloud, que puede personalizar según necesite"
+
+msgid "oixCloud Login Failed"
 msgstr "Fallo al iniciar sesión en oixCloud"
 
 msgid "Login Account"
@@ -3918,7 +3942,7 @@ msgstr "Iniciar sesión en la cuenta"
 msgid "oixCloud Logout Successful"
 msgstr "Cierre de sesión en oixCloud exitoso"
 
-msgid "oixCloud Logout Faild"
+msgid "oixCloud Logout Failed"
 msgstr "Fallo al cerrar sesión en oixCloud"
 
 msgid "Logout Account"
@@ -3929,15 +3953,6 @@ msgstr "Inicio de sesión de cuenta"
 
 msgid "Account logged in"
 msgstr "Cuenta iniciada"
-
-msgid "Account not logged in"
-msgstr "Cuenta no iniciada"
-
-msgid "Logout..."
-msgstr "Cerrando sesión..."
-
-msgid "Error Login Info"
-msgstr "Información de inicio de sesión incorrecta"
 
 msgid "Simple & trustworthy"
 msgstr "Simple y confiable"
@@ -3981,9 +3996,6 @@ msgstr "Tráfico restante"
 msgid "Plan Traffic"
 msgstr "Tráfico del plan"
 
-msgid "Checkin"
-msgstr "Probar suerte"
-
 msgid "oixCloud Account Login Failed! Please Check And Try Again..."
 msgstr "¡Fallo al iniciar sesión en oixCloud! Verifique los datos e intente de nuevo..."
 
@@ -3999,14 +4011,8 @@ msgstr "Correo electrónico de la cuenta"
 msgid "Account Password"
 msgstr "Contraseña de la cuenta"
 
-msgid "Checkin Interval (hour)"
-msgstr "Intervalo de registro (horas)"
-
 msgid "Checkin Multiple"
 msgstr "Multiplicador de registro"
-
-msgid "Multiple Must Be a Positive Integer and No More Than 100"
-msgstr "El multiplicador debe ser un número entero positivo no mayor a 100"
 
 msgid "Usage Help"
 msgstr "Ayuda de uso"
@@ -4083,12 +4089,6 @@ msgstr "Registro en oixCloud exitoso, resultado:"
 msgid "oixCloud Checkin Failed, Result:"
 msgstr "Fallo al registrar en oixCloud, resultado:"
 
-msgid "Note: oixCloud need a specific core installed, OpenClash will auto download"
-msgstr "Nota: oixCloud requiere la instalación de un núcleo específico; OpenClash lo descargará automáticamente"
-
-msgid "After the core start, an oixCloud nodes provider will be added, which you can customize as needed"
-msgstr "Tras iniciar el núcleo se añadirá un proveedor de nodos oixCloud que puedes personalizar"
-
 msgid "Checking backend version..."
 msgstr "Comprobando la versión del backend..."
 
@@ -4106,3 +4106,81 @@ msgstr "No se detectó información de versión del backend"
 
 msgid "Unable to detect backend version"
 msgstr "No se pudo detectar la versión del backend"
+
+msgid "Token Login"
+msgstr "Token Login"
+
+msgid "Enter your oixCloud token"
+msgstr "Enter your oixCloud token"
+
+msgid "Token login does not require email and password"
+msgstr "Token login does not require email and password"
+
+msgid "Please enter email address"
+msgstr "Please enter email address"
+
+msgid "Please enter password"
+msgstr "Please enter password"
+
+msgid "Please enter a valid token"
+msgstr "Please enter a valid token"
+
+msgid "Auto Checkin"
+msgstr "Auto Checkin"
+
+msgid "Multiple Must Be a Positive Integer and No More Than 100"
+msgstr "Multiple Must Be a Positive Integer and No More Than 100"
+
+msgid "Checkin Interval"
+msgstr "Checkin Interval"
+
+msgid "Hours"
+msgstr "Hours"
+
+msgid "Checkin interval must be between 1 and 720"
+msgstr "Checkin interval must be between 1 and 720"
+
+msgid "Checkin settings saved"
+msgstr "Checkin settings saved"
+
+msgid "Failed to save checkin settings, please try again"
+msgstr "Failed to save checkin settings, please try again"
+
+msgid "Network request failed, please check your connection and try again"
+msgstr "Network request failed, please check your connection and try again"
+
+msgid "Show on Overview"
+msgstr "Mostrar en resumen"
+
+msgid "Simple & trustworthy"
+msgstr "Simple y confiable"
+
+msgid "Cross-platform Support"
+msgstr "Soporte multiplataforma"
+
+msgid "Global Acceleration Network"
+msgstr "Red de aceleración global"
+
+msgid "Easy to Use"
+msgstr "Fácil de usar"
+
+msgid "Intelligent Shunting"
+msgstr "Desvío inteligente"
+
+msgid "Perfect Technical Support"
+msgstr "Soporte técnico perfecto"
+
+msgid "Setting saved"
+msgstr "Setting saved"
+
+msgid "Announcement"
+msgstr "Announcement"
+
+msgid "oixCloud Login Failed:"
+msgstr "oixCloud Login Failed:"
+
+msgid "oixCloud Logout Failed:"
+msgstr "oixCloud Logout Failed:"
+
+msgid "Checkin Failed:"
+msgstr "Checkin Failed:"
