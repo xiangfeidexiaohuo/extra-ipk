@@ -3328,11 +3328,6 @@ function action_config_file_list()
 		fingerprint = fingerprint
 	})
 end
-		config_files = config_files,
-		current_config = current_config,
-		total_count = #config_files
-	})
-end
 
 function action_upload_config()
 	local upload = HTTP.formvalue("config_file")
