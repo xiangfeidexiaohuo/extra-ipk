@@ -4131,6 +4131,9 @@ msgstr "请输入密码"
 msgid "Please enter a valid token"
 msgstr "请输入有效的 Token"
 
+msgid "Checkin"
+msgstr "试试手气"
+
 msgid "Auto Checkin"
 msgstr "自动签到"
 
@@ -4156,7 +4159,7 @@ msgid "Network request failed, please check your connection and try again"
 msgstr "网络请求失败，请检查网络连接后重试"
 
 msgid "Show on Overview"
-msgstr "在主页显示"
+msgstr "主页显示"
 
 msgid "Setting saved"
 msgstr "设置已保存"
@@ -4172,3 +4175,4 @@ msgstr "oixCloud 退出失败："
 
 msgid "Checkin Failed:"
 msgstr "签到失败："
+

@@ -3135,7 +3135,7 @@ function action_config_file_list()
 		end
 
 		table.sort(config_files, function(a, b)
-			return a.name < b.name
+			return string.lower(a.name) < string.lower(b.name)
 		end)
 	end
 
