@@ -1357,7 +1357,7 @@ msgstr "安装失败"
 
 #: applications/luci-app-ssr-plus/luasrc/view/shadowsocksr/component.htm:273
 msgid "Installed"
-msgstr ""
+msgstr "已安装"
 
 #: applications/luci-app-ssr-plus/luasrc/view/shadowsocksr/component.htm:121
 msgid "Installed Version"
@@ -1717,7 +1717,7 @@ msgstr "下一页"
 
 #: applications/luci-app-ssr-plus/luasrc/view/shadowsocksr/component.htm:273
 msgid "No"
-msgstr ""
+msgstr "否"
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/status.lua:252
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/status.lua:256
@@ -1881,7 +1881,7 @@ msgstr "仅当 Socks5 认证方式为 Password 时有效，非必填。"
 #: applications/luci-app-ssr-plus/luasrc/view/shadowsocksr/component.htm:28
 #: applications/luci-app-ssr-plus/luasrc/view/shadowsocksr/component.htm:504
 msgid "OpenClash GeoSite Database"
-msgstr ""
+msgstr "OpenClash GeoSite 数据库"
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:154
 msgid "OpenDNS"
@@ -3000,12 +3000,12 @@ msgstr "输入不正确的参数组合可能会导致服务无法启动"
 #: applications/luci-app-ssr-plus/luasrc/view/shadowsocksr/component.htm:33
 #: applications/luci-app-ssr-plus/luasrc/view/shadowsocksr/component.htm:505
 msgid "V2Ray GeoIP Databases"
-msgstr ""
+msgstr "V2Ray GeoIP 数据库"
 
 #: applications/luci-app-ssr-plus/luasrc/view/shadowsocksr/component.htm:37
 #: applications/luci-app-ssr-plus/luasrc/view/shadowsocksr/component.htm:506
 msgid "V2Ray GeoSite Databases"
-msgstr ""
+msgstr "V2Ray GeoSite 数据库"
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client-config.lua:375
 msgid "V2Ray/XRay"
@@ -3144,7 +3144,7 @@ msgstr "YAML 已重载！"
 
 #: applications/luci-app-ssr-plus/luasrc/view/shadowsocksr/component.htm:273
 msgid "Yes"
-msgstr ""
+msgstr "是"
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:157
 msgid "adblock_url"
