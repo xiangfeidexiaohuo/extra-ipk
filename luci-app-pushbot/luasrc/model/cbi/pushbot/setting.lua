@@ -147,7 +147,7 @@ a = s:option( DynamicList, "pushbot_blacklist", "关注列表"); a.rmempty = tru
 a:depends({macmechanism="block"})
 
 a = s:option( Value, "pushbot_interface", "接口名称"); a.rmempty = true
-a:depends({macmechanism="interface"})
+-- No depends — Value type — disturb card builds dropdown from CT_IFACES
 
 a=s:option( ListValue,"macmechanism2","MAC过滤2"); a.rmempty = true
 a:value("","disable"); a:value("MAC_online","列表内任意设备在线时免打扰")

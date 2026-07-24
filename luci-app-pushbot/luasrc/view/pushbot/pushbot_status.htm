@@ -1377,7 +1377,11 @@ var CT_IP_BLACK='<%=js_s(c_ip_black_val)%>';
 							srcSel = allSels[si]; break;
 						}
 					}
+					/* if still not a valid select, force fallback */
+					if (!srcSel || !srcSel.options || srcSel.options.length === 0) { srcSel = null; }
 				}
+				/* disable the stashed original widget so only our hidden input submits */
+				if (ifWidget) { ifWidget.name = ''; }
 				var sel = document.createElement('select');
 				sel.style.cssText = 'width:100%;padding:7px;border-radius:8px;border:1px solid rgba(148,163,184,0.3)';
 				/* ensure form submission — add hidden fallback input */
@@ -1397,12 +1401,30 @@ var CT_IP_BLACK='<%=js_s(c_ip_black_val)%>';
 						sel.appendChild(opt);
 					}
 				} else {
-					/* last resort: text input */
-					var inp = document.createElement('input');
-					inp.type = 'text';
-					inp.placeholder = 'br-lan';
-					inp.style.cssText = 'width:100%;padding:7px 10px;border-radius:8px;border:1px solid rgba(148,163,184,0.3);font-size:13px;box-sizing:border-box;background:rgba(255,255,255,0.7);color:inherit';
-					sel = inp;
+					/* fallback: use CT_IFACES from template for dropdown */
+					if (typeof CT_IFACES !== 'undefined' && CT_IFACES.length > 0) {
+						CT_IFACES.forEach(function(f) {
+							var opt = document.createElement('option');
+							opt.value = f; opt.textContent = f;
+							sel.appendChild(opt);
+						});
+						/* set initial value from UCI if available */
+						if (ifWidget) {
+							for (var oi2 = 0; oi2 < sel.options.length; oi2++) {
+								if (sel.options[oi2].value === ifWidget.value) {
+									sel.options[oi2].selected = true;
+									hiddenIf.value = ifWidget.value;
+								}
+							}
+						}
+					} else {
+						/* last resort: text input */
+						var inp = document.createElement('input');
+						inp.type = 'text';
+						inp.placeholder = 'br-lan';
+						inp.style.cssText = 'width:100%;padding:7px 10px;border-radius:8px;border:1px solid rgba(148,163,184,0.3);font-size:13px;box-sizing:border-box;background:rgba(255,255,255,0.7);color:inherit';
+						sel = inp;
+					}
 				}
 				sel.addEventListener('change', function() {
 					var val = this.value;
