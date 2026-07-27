@@ -7,12 +7,12 @@
 include $(TOPDIR)/rules.mk
 
 LUCI_TITLE:=LuCI support for linkeasefull
-LUCI_DEPENDS:=+linkeasefull
+LUCI_DEPENDS:=+linkeasefull +luci-lib-linkeasefile
 LUCI_PKGARCH:=all
 
-PKG_VERSION:=1.0.0
+PKG_VERSION:=1.0.1
 PKG_RELEASE:=1
 
-include ../../luci.mk
+include $(TOPDIR)/feeds/luci/luci.mk
 
 # call BuildPackage - OpenWrt buildroot signature
