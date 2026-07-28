@@ -234,29 +234,12 @@
 		xhr.timeout = 0;
 		xhr.open('GET', '<%=luci.dispatcher.build_url("admin", "services", "openclash", "startlog")%>', true);
 		xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-		var _streamWatchdog = null;
-
-		function _resetWatchdog() {
-			if (_streamWatchdog) clearTimeout(_streamWatchdog);
-			_streamWatchdog = setTimeout(function() {
-				if (_startLogXHR === xhr) {
-					xhr.abort();
-					_startLogXHR = null;
-					_scheduleLogReconnect();
-				}
-			}, 3000);
-		}
-
-		function _clearWatchdog() {
-			if (_streamWatchdog) { clearTimeout(_streamWatchdog); _streamWatchdog = null; }
-		}
 
 		xhr.onprogress = function() {
 			if (_startLogXHR !== xhr) return;
 			var text = xhr.responseText || '';
 			if (text.indexOf('##FINISH##') >= 0) {
 				_startLogXHR = null;
-				_clearWatchdog();
 				setTimeout(function() { _showRandomTip(); }, 3000);
 				if (text.match('level=fatal')) {
 					XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash", "del_start_log")%>', null, function() {});
@@ -267,7 +250,6 @@
 			}
 			if (text.match('level=fatal')) {
 				_startLogXHR = null;
-				_clearWatchdog();
 				XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash", "del_start_log")%>', null, function() {});
 				var msg = (text.split('msg=')[1] || '').replace('##FINISH##', '').trim();
 				if (msg) alert('<%:OpenClash Start Failed%> :\n\n' + msg);
@@ -292,21 +274,19 @@
 				if (!colored) {
 					update_tip.innerHTML = '<b style=color:var(--info-color)>' + lastLine + '</b>';
 				}
-				_resetWatchdog();
+			}
 			}
 		};
 
 		xhr.onload = function() {
 			if (_startLogXHR !== xhr) return;
 			_startLogXHR = null;
-			_clearWatchdog();
 			_scheduleLogReconnect();
 		};
 
 		xhr.onerror = function() {
 			if (_startLogXHR !== xhr) return;
 			_startLogXHR = null;
-			_clearWatchdog();
 			_scheduleLogReconnect();
 		};
 
