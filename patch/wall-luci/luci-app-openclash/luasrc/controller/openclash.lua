@@ -1677,20 +1677,6 @@ end
 function action_start()
 	HTTP.prepare_content("text/plain; charset=utf-8")
 	local logfile = "/tmp/openclash_start.log"
-	local wait_mode = HTTP.formvalue("wait") == "1"
-
-	if not wait_mode then
-		if fs.access(logfile) then
-			local content = fs.readfile(logfile)
-			if content then
-				content = content:gsub("^%s+", ""):gsub("%s+$", "")
-				if content ~= "" then
-					write_padded(trans_line(content))
-				end
-			end
-		end
-		return
-	end
 
 	local cmd = string.format(
 		"old=''; while true; do content=$(cat '%s' 2>/dev/null); " ..
