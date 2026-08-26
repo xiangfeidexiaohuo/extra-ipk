@@ -125,7 +125,7 @@ return {
 	 *   url 模式：随机起点换列表内其他 URL 最多 3 次，带 --interface 适配多 WAN
 	 * 返回纯文本（获取失败时返回翻译后的失败文案） */
 	act_get_ip: function() {
-		let type = http.formvalue("type") ?? "4";
+		let ip_type = http.formvalue("type") ?? "4";
 		let mode = http.formvalue("mode") ?? "iface";
 		let iface = http.formvalue("iface") ?? "";
 		let urls  = http.formvalue("url")  ?? "";
@@ -137,7 +137,7 @@ return {
 
 		/* 私网/链路本地判断 */
 		function is_private(ip) {
-			if (type == "4") {
+			if (ip_type == "4") {
 				let m = match(ip, /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
 				if (!m) return true;
 				let a = +m[1], b = +m[2];
@@ -167,7 +167,7 @@ return {
 
 		let ip = "";
 		if (mode == "iface" && iface != "") {
-			if (type == "4") {
+			if (ip_type == "4") {
 				ip = run("/sbin/ifconfig " + sq(iface) +
 					" | awk '/inet addr/ {print $2}' | awk -F: '{print $2}'" +
 					" | grep -oE '[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}' | head -n1");
