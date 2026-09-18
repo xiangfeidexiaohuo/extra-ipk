@@ -760,6 +760,9 @@ check_core_status()
          if [ "$ipv6_mode" -eq 2 ] || [ "$ipv6_mode" -eq 3 ]; then
             ip -6 route add default dev utun table "$PROXY_ROUTE_TABLE"
             ip -6 rule add fwmark "$PROXY_FWMARK" table "$PROXY_ROUTE_TABLE" pref 1888
+            [ -z "$fakeip_range6" ] && fakeip_range6=$(uci_get_config "fakeip_range6" || echo "fdfe:dcba:9876::1/64")
+            [ "$fakeip_range6" = "0" ] && fakeip_range6="fdfe:dcba:9876::1/64"
+            ip -6 route replace "$fakeip_range6" dev utun 2>/dev/null
          fi
          if [ -n "$en_mode_tun" ]; then
             ip route add default dev utun table "$PROXY_ROUTE_TABLE"
@@ -2918,6 +2921,9 @@ revert_firewall()
    ip route del default dev utun table "$PROXY_ROUTE_TABLE"
    ip -6 rule del fwmark "$PROXY_FWMARK" table "$PROXY_ROUTE_TABLE"
    ip -6 route del default dev utun table "$PROXY_ROUTE_TABLE"
+   [ -z "$fakeip_range6" ] && fakeip_range6=$(uci_get_config "fakeip_range6" || echo "fdfe:dcba:9876::1/64")
+   [ "$fakeip_range6" = "0" ] && fakeip_range6="fdfe:dcba:9876::1/64"
+   ip -6 route del "$fakeip_range6" dev utun 2>/dev/null
 
    if [ -n "$FW4" ]; then
       for nft in "input" "forward" "output" "dstnat" "srcnat" "nat_output" "mangle_prerouting" "mangle_output"; do
@@ -3068,6 +3074,7 @@ EOF
       AUTO_SMART_SWITCH:int_bool \
       BYPASS_GATEWAY_COMPATIBLE:int_bool \
       CHINA_IP_ROUTE:int \
+      CHINA_IP_ROUTE_DOMAIN_SOURCE:string \
       CHINA_IP_ROUTE_PASS:string \
       CHINA_IP6_ROUTE:int \
       CHINA_IP6_ROUTE_PASS:string \
@@ -3646,7 +3653,7 @@ start_service()
             if [ -f "/tmp/yaml_openclash_ruby_parse" ]; then
                sed -n "s/.*yaml_file_path=['\"]\([^'\"]*\)['\"].*/\1/p" /tmp/yaml_openclash_ruby_parse | sort | uniq | while read -r yaml_file; do
                   [ -z "$yaml_file" ] && continue
-                  ruby_code=$(grep "yaml_file_path=['\"]$yaml_file['\"]" /tmp/yaml_openclash_ruby_parse | sed "s/^threads << Thread.new do //;s/ end$//")
+                  ruby_code=$(grep "yaml_file_path=['\"]$yaml_file['\"]" /tmp/yaml_openclash_ruby_parse | sed "s/^threads << YAML::Inline.new do //;s/ end$//")
                   [ -z "$ruby_code" ] && continue
                   if [ -f "$yaml_file" ]; then
                      (
@@ -3676,7 +3683,7 @@ start_service()
                provider_configs.each do |provider_type, path_prefix|
                   if Value.key?(provider_type) && Value[provider_type].is_a?(Hash)
                      Value[provider_type].each do |name, config|
-                        threads << Thread.new {
+                        threads << YAML::Inline.new {
                            begin
                               path_val = config['path']
                               if path_val && !path_val.to_s.match?(%r{^\./#{Regexp.escape(path_prefix)}/})
