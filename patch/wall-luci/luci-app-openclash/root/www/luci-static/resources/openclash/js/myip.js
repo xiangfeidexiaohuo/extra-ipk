@@ -1143,7 +1143,7 @@
         }
         var parentLeft = d.region.parentNode.getBoundingClientRect().left;
         var left = Math.round(right - parentLeft + 5);
-        var card = d.region.closest('.myip-main-card');
+        var card = d.region.closest('.myip-check-item');
         if (card) {
             var maxLeft = Math.floor(card.getBoundingClientRect().right - d.region.offsetWidth - 4 - parentLeft);
             if (left > maxLeft) left = maxLeft;

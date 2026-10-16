@@ -2423,6 +2423,8 @@ html[data-darkmode="true"] .oc .myip-gear-state {
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    white-space: normal;
+    overflow-wrap: anywhere;
     font-size: var(--myip-unlock-name-fs, 12px);
     line-height: var(--myip-unlock-name-lh, 1.3);
     text-align: center;
