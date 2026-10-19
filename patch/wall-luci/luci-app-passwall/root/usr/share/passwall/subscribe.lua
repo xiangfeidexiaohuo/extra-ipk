@@ -144,6 +144,14 @@ local log = function(...)
 	end
 end
 
+local function flush_log_buffer()
+	local buffered = log_buffer
+	log_buffer = nil
+	for _, msg in ipairs(buffered or {}) do
+		log(msg)
+	end
+end
+
 local nodes_table = {}
 for k, e in ipairs(api.get_valid_nodes()) do
 	if e.node_type == "normal" then
@@ -889,6 +897,7 @@ local function processData(szType, content, add_mode, group, sub_cfg)
 			result.method = method
 			result.ss_method = method
 			result.password = password
+			result.uot = params.uot
 			result.tcp_fast_open = params.tfo
 			result.use_finalmask = (params.fm and params.fm ~= "") and "1" or nil
 			result.finalmask = (params.fm and params.fm ~= "") and api.base64Encode(params.fm) or nil
@@ -1043,7 +1052,7 @@ local function processData(szType, content, add_mode, group, sub_cfg)
 					end
 					local insecure = params.allowinsecure or params.allowInsecure or params.insecure
 					result.tls_allowInsecure = (insecure == "1" or insecure == "0") and insecure or (sub_allowinsecure and "1" or "0")
-					result.uot = params.udp
+					result.uot = params.uot or params.udp
 				else
 					result.error_msg = "请更换 Xray 或 Sing-Box 来支持 SS 更多的传输方式。"
 				end
@@ -1424,7 +1433,7 @@ local function processData(szType, content, add_mode, group, sub_cfg)
 		for _, v in pairs(split(query[2], '&')) do
 			local s = v:find("=", 1, true)
 			if s and s > 1 then
-				params[v:sub(1, s - 1)] = v:sub(s + 1)
+				params[v:sub(1, s - 1)] = UrlDecode(v:sub(s + 1))
 			end
 		end
 		-- [2001:4860:4860::8888]:443
@@ -1451,6 +1460,7 @@ local function processData(szType, content, add_mode, group, sub_cfg)
 		result.hysteria_up_mbps = params.upmbps or sub_hy_up_mbps
 		result.hysteria_down_mbps = params.downmbps or sub_hy_down_mbps
 		result.hysteria_hop = params.mport
+		result.tls_CertByName = params.vcn
 
 	elseif szType == 'hysteria2' or szType == 'hy2' then
 		local alias = ""
@@ -1494,6 +1504,7 @@ local function processData(szType, content, add_mode, group, sub_cfg)
 		result.hysteria2_up_mbps = params.upmbps or (sub_cfg and sub_hy_up_mbps or nil)
 		result.hysteria2_down_mbps = params.downmbps or (sub_cfg and sub_hy_down_mbps or nil)
 		result.hysteria2_hop = params.mport
+		result.hysteria2_hop_interval = params.hopinterval or params["hop-interval"]
 		if params.ech and params.ech ~= "" then
 			result.ech = "1"
 			result.ech_config = params.ech
@@ -1573,6 +1584,7 @@ local function processData(szType, content, add_mode, group, sub_cfg)
 		end
 		result.tls_serverName = params.sni
 		result.tls_disable_sni = params.disable_sni
+		result.tls_CertByName = params.vcn
 		result.tls_pinSHA256 = params.pcs or params.pinsha256
 		result.tuic_alpn = params.alpn or "h3"
 		result.tuic_congestion_control = params.congestion_control or "cubic"
@@ -1998,10 +2010,29 @@ local function select_node(nodes, config, parentConfig)
 	end
 end
 
+-- 账户信息只在实际变化时写回，由调用方统一提交。
+local function update_subscribe_info()
+	local changed = {}
+	for cfgid, info in pairs(subscribe_info) do
+		for key, value in pairs(info) do
+			value = value and value ~= "" and value or nil
+			if uci_get(cfgid, key) ~= value then
+				if value then
+					uci_set(cfgid, key, value)
+				else
+					uci_del(cfgid, key)
+				end
+				changed[cfgid] = true
+			end
+		end
+	end
+	return changed
+end
+
 local function update_node(manual)
 	if next(nodeResult) == nil then
 		log("没有可用的节点信息更新。")
-		return
+		return false
 	end
 
 	local group = {}
@@ -2091,17 +2122,6 @@ local function update_node(manual)
 			end
 		end
 	end
-	-- 更新机场信息
-	for cfgid, info in pairs(subscribe_info) do
-		for key, value in pairs(info) do
-			if value ~= "" then
-				uci_set(cfgid, key, value)
-			else
-				uci_del(cfgid, key)
-			end
-		end
-	end
-
 	if next(CONFIG) then
 		local nodes = {}
 		uci_foreach("nodes", function(node)
@@ -2123,9 +2143,7 @@ local function update_node(manual)
 		end
 	end
 
-	uci_save(true)
-
-	if manual ~= 1 then restart_required = true end
+	return true
 end
 
 local function parse_link(raw, add_mode, group, sub_cfg)
@@ -2289,26 +2307,17 @@ local execute = function()
 					if not manual_sub and new_md5 ~= "" and old_md5 == new_md5 then
 						log_buffer = nil -- 无物理变动，直接丢弃暂存的丢弃与计数明细
 						log('订阅:【' .. remark .. '】没有变化，无需更新。')
-						if subscribe_info[cfgid] then
-							log('订阅:【' .. remark .. '】已同步刷新账户用量与到期时间信息。')
-						end
 					else
 						-- 节点发生变动时，回放前置解析期间的节点统计与丢弃日志
-						if log_buffer then
-							local bufs = log_buffer
-							log_buffer = nil
-							for _, msg in ipairs(bufs) do
-								log(msg)
-							end
-						end
-						-- 仅在成功解析出有效节点时才写入配置并记录新 MD5，防止解析失败时误存空数据或伪造无变更状态
+						flush_log_buffer()
+						-- 暂存有效节点及其 MD5，完成节点更新后再一起写入配置。
 						if #parsed_nodes > 0 then
 							nodeResult[#nodeResult + 1] = {
 								remark = remark,
 								list = parsed_nodes,
-								sub_cfg = value
+								sub_cfg = value,
+								md5 = new_md5
 							}
-							uci_set(cfgid, "md5", new_md5)
 						end
 					end
 				else
@@ -2319,30 +2328,33 @@ local execute = function()
 				end
 			end
 		end
-		-- 无论节点物理配置是否变动，始终将最新提取到的账户用量与到期时间静默写回 UCI，确保 Web 面板实时刷新
-		for c_id, info in pairs(subscribe_info) do
-			for key, val in pairs(info) do
-				if val and val ~= "" then
-					uci_set(c_id, key, val)
-				else
-					uci_del(c_id, key)
-				end
-			end
-		end
-		uci_save(true)
-
 		if #fail_list > 0 then
 			for index, value in ipairs(fail_list) do
 				log(string.format('【%s】订阅失败，可能是订阅地址无效，或是网络问题，请诊断！[%s]', (value.remark or ""), tostring(value.http_code or 0)))
 			end
 		end
-		update_node(0)
+		local nodes_changed = update_node(0)
+		local info_changed = update_subscribe_info()
+		-- 节点、引用关系和 MD5 必须在同一次提交中保存。
+		for _, result in ipairs(nodeResult) do
+			uci_set(result.sub_cfg[".name"], "md5", result.md5)
+		end
+		if nodes_changed or next(info_changed) then
+			uci_save(true)
+			restart_required = nodes_changed
+			for _, value in ipairs(subscribe_list) do
+				if info_changed[value[".name"]] then
+					log(string.format('刷新订阅【%s】账户用量与到期时间信息。', (value.remark or "")))
+				end
+			end
+		end
 	end
 end
 
 if arg[1] == "start" then
 	log('开始订阅...')
 	xpcall(execute, function(e)
+		flush_log_buffer()
 		log(e)
 		if type(debug) == "table" and type(debug.traceback) == "function" then
 			log(debug.traceback())
@@ -2355,7 +2367,7 @@ elseif arg[1] == "add" then
 	local raw = f:read('*all')
 	f:close()
 	parse_link(raw, "1", arg[2])
-	update_node(1)
+	if update_node(1) then uci_save(true) end
 	api.remove("/tmp/links.conf")
 elseif arg[1] == "truncate" then
 	truncate_nodes(arg[2])
